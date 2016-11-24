@@ -6,13 +6,9 @@ using System.Threading.Tasks;
 
 namespace VoronoiLib.Structures
 {
-    abstract class FortuneEvent : IComparable<FortuneEvent>
+    interface FortuneEvent : IComparable<FortuneEvent>
     {
-        protected abstract int GetY();
-
-        public int CompareTo(FortuneEvent other)
-        {
-            return GetY().CompareTo(other.GetY());
-        }
+        int X { get; }
+        int Y { get; }
     }
 }

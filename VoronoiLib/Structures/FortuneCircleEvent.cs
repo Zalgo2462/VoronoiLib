@@ -6,11 +6,23 @@ using System.Threading.Tasks;
 
 namespace VoronoiLib.Structures
 {
-    class FortuneCircleEvent : FortuneEvent
+    internal class FortuneCircleEvent : FortuneEvent
     {
-        protected override int GetY()
+        internal FortuneSite Lowest { get; }
+        internal FortuneTreeLeaf ToDelete { get; }
+
+        internal FortuneCircleEvent(FortuneSite lowest, FortuneTreeLeaf toDelete)
         {
-            throw new NotImplementedException();
+            Lowest = lowest;
+            ToDelete = toDelete;
         }
+
+        public int CompareTo(FortuneEvent other)
+        {
+            return Y.CompareTo(other.Y);
+        }
+
+        public int X => Lowest.X;
+        public int Y => Lowest.Y;
     }
 }

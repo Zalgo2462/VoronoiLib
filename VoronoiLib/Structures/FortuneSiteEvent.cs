@@ -1,10 +1,20 @@
 ﻿namespace VoronoiLib.Structures
 {
-    class FortuneSiteEvent : FortuneEvent
+    internal class FortuneSiteEvent : FortuneEvent
     {
-        protected override int GetY()
+        public int X => Site.X;
+        public int Y => Site.Y;
+        internal FortuneSite Site { get; }
+
+        internal FortuneSiteEvent(FortuneSite site)
         {
-            throw new System.NotImplementedException();
+            Site = site;
         }
+
+        public int CompareTo(FortuneEvent other)
+        {
+            return Y.CompareTo(other.Y);
+        }
+     
     }
 }

@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace VoronoiLib.Structures
 {
-    class FortuneTreeNode
+    interface FortuneTreeNode
     {
+        int GetX(int directrix);
+        int GetY(int directrix);
     }
 }
