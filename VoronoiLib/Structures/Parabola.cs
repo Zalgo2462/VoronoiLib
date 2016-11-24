@@ -21,8 +21,8 @@ namespace VoronoiLib.Structures
                 return (focus1X + focus2X)/2;
             //admittedly this is pure voodoo.
             //there is attached documentation for this function
-            var firstIntersect = ((-focus2Y + directrix)*focus1X + focus2X*(focus1Y - directrix) +
-                                  Math.Sqrt((directrix - focus1Y)*(-focus2Y + directrix)*
+            var firstIntersect = (focus1X*(directrix - focus2Y) + focus2X*(focus1Y - directrix) +
+                                  Math.Sqrt((directrix - focus1Y)*(directrix + -focus2Y)*
                                             (Math.Pow(focus1X - focus2X, 2) + Math.Pow(focus1Y - focus2Y, 2))))/
                                  (focus1Y - focus2Y);
             return firstIntersect;
