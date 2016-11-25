@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace VoronoiLib.Structures
 {
@@ -51,6 +52,26 @@ namespace VoronoiLib.Structures
             if (Count == 0)
                 throw new InvalidOperationException("Min heap is empty");
             return items[0];
+        }
+
+        public bool Remove(T item)
+        {
+            int index = items.Select((t, i) => new {obj = t, index = i}).
+                Where(t => t.obj.Equals(item)).
+                Select(t => t.index).
+                DefaultIfEmpty(-1).
+                FirstOrDefault();
+
+            if (index == -1)
+                return false;
+
+            Count--;
+            Swap(index, Count);
+            if (LeftLessThanRight(index, (index - 1)/2))
+                PercolateUp(index);
+            else
+                PercolateDown(index);
+            return true;
         }
 
         private void PercolateDown(int index)

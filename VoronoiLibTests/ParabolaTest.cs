@@ -1,5 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using VoronoiLib.Structures;
+using VoronoiLib;
 
 namespace VoronoiLibTests
 {

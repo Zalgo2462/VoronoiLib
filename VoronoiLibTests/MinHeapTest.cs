@@ -25,6 +25,28 @@ namespace VoronoiLibTests
         }
 
         [TestMethod]
+        public void DeleteTest()
+        {
+            var heap = new MinHeap<int>(5);
+            for (int i = 1; i <= 5; i++)
+            {
+                //insert 5 through 1
+                for (int j = 5; j >= 1; j--)
+                {
+                    heap.Insert(j);
+                }
+                //remove i
+                heap.Remove(i);
+                //the order of pops should be sorted without i
+                for (int j = 1; j <= 5; j++)
+                {
+                    if (j != i)
+                        Assert.AreEqual(j, heap.Pop());
+                }
+            }
+        }
+
+        [TestMethod]
         public void SortRandom()
         {
             var numbers = new List<double>();

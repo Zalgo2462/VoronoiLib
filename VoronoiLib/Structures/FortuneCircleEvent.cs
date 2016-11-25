@@ -9,12 +9,12 @@ namespace VoronoiLib.Structures
     internal class FortuneCircleEvent : FortuneEvent
     {
         internal FortuneSite Lowest { get; }
-        internal FortuneTreeLeaf ToDelete { get; }
+        //internal FortuneBeachSection ToDelete { get; }
 
-        internal FortuneCircleEvent(FortuneSite lowest, FortuneTreeLeaf toDelete)
+        internal FortuneCircleEvent(FortuneSite lowest/*, FortuneBeachSection toDelete*/)
         {
             Lowest = lowest;
-            ToDelete = toDelete;
+            //ToDelete = toDelete;
         }
 
         public int CompareTo(FortuneEvent other)
