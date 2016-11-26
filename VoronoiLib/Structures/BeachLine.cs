@@ -6,7 +6,7 @@ namespace VoronoiLib.Structures
     internal class BeachSection
     {
         internal FortuneSite Site { get;}
-        internal VHalfEdge Edge { get; set; }
+        internal VEdge Edge { get; set; }
         //NOTE: this will change
         internal FortuneCircleEvent CircleEvent { get; set; }
 
@@ -26,7 +26,7 @@ namespace VoronoiLib.Structures
             beachLine = new RBTree<BeachSection>();
         }
 
-        internal RBTreeNode<BeachSection> AddBeachSection(FortuneSite site, MinHeap<FortuneEvent> eventQueue, List<VHalfEdge> edges)
+        internal RBTreeNode<BeachSection> AddBeachSection(FortuneSite site, MinHeap<FortuneEvent> eventQueue, List<VEdge> edges)
         {
             double x = site.X;
             double directrix = site.Y;
@@ -124,23 +124,62 @@ namespace VoronoiLib.Structures
 
                 //grab the projection of this site onto the parabola
                 var y = ParabolaMath.EvalParabola(leftSection.Data.Site.X, leftSection.Data.Site.Y, directrix, x);
-                var start = new VPoint(x, y);
+                var intersection = new VPoint(x, y);
 
                 //create the two half edges corresponding to this intersection
-                var leftEdge = new VHalfEdge(start, leftSection.Data.Site, site);
-                var rightEdge = new VHalfEdge(start, site, rightSection.Data.Site);
+                var leftEdge = new VEdge(intersection, leftSection.Data.Site, site);
+                var rightEdge = new VEdge(intersection, site, rightSection.Data.Site);
                 leftEdge.Neighbor = rightEdge;
 
                 //put the edge in the list
                 edges.Add(leftEdge);
 
-                //TODO: put edge in tree
+                //TODO: prove why this is okay...
+                newSection.Data.Edge = leftEdge;
+                rightSection.Data.Edge = rightEdge;
+
                 CheckCircle(leftSection, eventQueue);
                 CheckCircle(rightSection, eventQueue);
             }
 
             //we will handle edge cases later
             return newSection;
+        }
+
+        internal void RemoveBeachSection(RBTreeNode<BeachSection> section, MinHeap<FortuneEvent> eventQueue, List<VEdge> edges)
+        {
+            var circle = section.Data.CircleEvent;
+            var x = circle.X;
+            var y = circle.YCenter;
+            var vertex = new VPoint(x, y);
+
+            var prev = section.Previous;
+            var next = section.Next;
+
+            //Tie both segments to the new vertex
+            section.Data.Edge.End = vertex;
+            next.Data.Edge.End = vertex;
+
+            //create a new edge with start point at the vertex and assign it to next
+            var newEdge = new VEdge(vertex, prev.Data.Site, next.Data.Site);
+            next.Data.Edge = newEdge;
+            edges.Add(newEdge);
+
+            if (prev.Data.CircleEvent != null)
+            {
+                eventQueue.Remove(prev.Data.CircleEvent);
+                prev.Data.CircleEvent = null;
+            }
+            if (next.Data.CircleEvent != null)
+            {
+                eventQueue.Remove(next.Data.CircleEvent);
+                next.Data.CircleEvent = null;
+            }
+
+            beachLine.RemoveNode(section);
+
+            CheckCircle(prev, eventQueue);
+            CheckCircle(next, eventQueue);
         }
 
         private static double LeftBreakpoint(RBTreeNode<BeachSection> node, double directrix)

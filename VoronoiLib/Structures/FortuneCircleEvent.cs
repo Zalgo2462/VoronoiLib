@@ -9,13 +9,13 @@ namespace VoronoiLib.Structures
     internal class FortuneCircleEvent : FortuneEvent
     {
         internal VPoint Lowest { get; }
-        internal double Center { get; }
+        internal double YCenter { get; }
         internal RBTreeNode<BeachSection> ToDelete { get; }
 
-        internal FortuneCircleEvent(VPoint lowest, double center, RBTreeNode<BeachSection> toDelete)
+        internal FortuneCircleEvent(VPoint lowest, double yCenter, RBTreeNode<BeachSection> toDelete)
         {
             Lowest = lowest;
-            Center = center;
+            YCenter = yCenter;
             ToDelete = toDelete;
         }
 

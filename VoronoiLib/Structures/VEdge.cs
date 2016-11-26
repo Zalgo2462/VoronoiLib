@@ -1,25 +1,24 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace VoronoiLib.Structures
 {
-    public class VHalfEdge
+    public class VEdge
     {
-        public VPoint Start { get; }
-        public FortuneSite Site { get; }
+        public VPoint Start { get; internal set; }
+        public VPoint End { get; internal set; }
+        public FortuneSite Left { get; }
+        public FortuneSite Right { get; }
         public double SlopeRise { get; }
         public double SlopeRun { get; }
         public double? Intercept { get; }
 
-        public VHalfEdge Neighbor { get; internal set; }
+        public VEdge Neighbor { get; internal set; }
 
-        internal VHalfEdge(VPoint start, FortuneSite left, FortuneSite right)
+        internal VEdge(VPoint start, FortuneSite left, FortuneSite right)
         {
             Start = start;
-            Site = left;
+            Left = left;
+            Right = right;
             //from negative reciprocal of slope of line from left to right
             //ala m = (left.y -right.y / left.x - right.x)
             SlopeRise = right.X - left.X;

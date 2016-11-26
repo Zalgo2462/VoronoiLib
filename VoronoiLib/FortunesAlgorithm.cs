@@ -15,7 +15,7 @@ namespace VoronoiLib
             sites.ForEach(s => eventQueue.Insert(new FortuneSiteEvent(s)));
             //init tree
             var beachLine = new BeachLine();
-            var edges = new List<VHalfEdge>();
+            var edges = new List<VEdge>();
             //init edge list
             while (eventQueue.Count != 0)
             {
