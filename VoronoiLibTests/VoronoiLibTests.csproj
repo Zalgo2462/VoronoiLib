@@ -51,6 +51,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="FortuneAlgorithmTest.cs" />
     <Compile Include="MinHeapTest.cs" />
     <Compile Include="ParabolaTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

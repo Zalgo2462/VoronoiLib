@@ -26,10 +26,11 @@ namespace VoronoiLib.Structures
             beachLine = new RBTree<BeachSection>();
         }
 
-        internal RBTreeNode<BeachSection> AddBeachSection(FortuneSite site, MinHeap<FortuneEvent> eventQueue, List<VEdge> edges)
+        internal RBTreeNode<BeachSection> AddBeachSection(FortuneSiteEvent siteEvent, MinHeap<FortuneEvent> eventQueue, List<VEdge> edges)
         {
-            double x = site.X;
-            double directrix = site.Y;
+            var site = siteEvent.Site;
+            var x = site.X;
+            var directrix = site.Y;
 
             RBTreeNode<BeachSection> leftSection = null;
             RBTreeNode<BeachSection> rightSection = null;
@@ -127,8 +128,8 @@ namespace VoronoiLib.Structures
                 var intersection = new VPoint(x, y);
 
                 //create the two half edges corresponding to this intersection
-                var leftEdge = new VEdge(intersection, leftSection.Data.Site, site);
-                var rightEdge = new VEdge(intersection, site, rightSection.Data.Site);
+                var rightEdge = new VEdge(intersection, leftSection.Data.Site, site);
+                var leftEdge = new VEdge(intersection, site, leftSection.Data.Site);
                 leftEdge.Neighbor = rightEdge;
 
                 //put the edge in the list
@@ -146,9 +147,9 @@ namespace VoronoiLib.Structures
             return newSection;
         }
 
-        internal void RemoveBeachSection(RBTreeNode<BeachSection> section, MinHeap<FortuneEvent> eventQueue, List<VEdge> edges)
+        internal void RemoveBeachSection(FortuneCircleEvent circle, MinHeap<FortuneEvent> eventQueue, List<VEdge> edges)
         {
-            var circle = section.Data.CircleEvent;
+            var section = circle.ToDelete;
             var x = circle.X;
             var y = circle.YCenter;
             var vertex = new VPoint(x, y);
@@ -223,7 +224,7 @@ namespace VoronoiLib.Structures
             //if (section == null)
             //    return;
             var left = section.Previous;
-            var right = section.Right;
+            var right = section.Next;
             if (left == null || right == null)
                 return;
 
@@ -257,12 +258,12 @@ namespace VoronoiLib.Structures
 
             var magnitudeA = ax*ax + ay*ay;
             var magnitudeC = cx*cx + cy*cy;
-            var x = (cy*magnitudeA - ay*magnitudeC)/d;
-            var y = (ax*magnitudeC - cy*magnitudeA)/d;
+            var x = (cy*magnitudeA - ay*magnitudeC)/(2*d);
+            var y = (ax*magnitudeC - cx*magnitudeA)/(2*d);
 
             //add back offset
             var ycenter = y + by;
-
+            //y center is off
             var circleEvent = new FortuneCircleEvent(
                 new VPoint(x + bx, ycenter + Math.Sqrt(x * x + y * y)),
                 ycenter, section

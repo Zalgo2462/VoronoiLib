@@ -26,7 +26,7 @@ namespace VoronoiLib.Structures
             Intercept = null;
 
             if (SlopeRise.ApproxEqual(0) || SlopeRun.ApproxEqual(0)) return;
-            double m = SlopeRise/SlopeRun;
+            var m = SlopeRise/SlopeRun;
             Intercept = start.Y - m*start.X;
         }
     }

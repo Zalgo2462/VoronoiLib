@@ -102,5 +102,48 @@ namespace VoronoiLibTests
             first = first.Next;
             Assert.AreEqual(null, first);
         }
+
+        [TestMethod]
+        public void TestRemoveAtBack()
+        {
+            var tree = new RBTree<char>();
+            var last = tree.InsertSuccessor(null, 'L');
+            last = tree.InsertSuccessor(last, 'o');
+            last = tree.InsertSuccessor(last, 'g');
+            last = tree.InsertSuccessor(last, 'a');
+            last = tree.InsertSuccessor(last, 'n');
+            last = tree.InsertSuccessor(last, '!');
+            var prev = last.Previous;
+            tree.RemoveNode(last);
+            last = prev.Previous;
+            tree.RemoveNode(prev);
+            tree.RemoveNode(last);
+            Assert.AreEqual('o', tree.Root.Data);
+            Assert.AreEqual('L', tree.Root.Left.Data);
+            Assert.AreEqual('g', tree.Root.Right.Data);
+        }
+
+        [TestMethod]
+        public void TestRemoveAtFront()
+        {
+            var tree = new RBTree<char>();
+            var last = tree.InsertSuccessor(null, 'L');
+            var first = last;
+            last = tree.InsertSuccessor(last, 'o');
+            last = tree.InsertSuccessor(last, 'g');
+            last = tree.InsertSuccessor(last, 'a');
+            last = tree.InsertSuccessor(last, 'n');
+            last = tree.InsertSuccessor(last, '!');
+            last = first.Next;
+            tree.RemoveNode(first);
+            first = last;
+            last = last.Next;
+            tree.RemoveNode(first);
+            first = last;
+            tree.RemoveNode(first);
+            Assert.AreEqual('n', tree.Root.Data);
+            Assert.AreEqual('a', tree.Root.Left.Data);
+            Assert.AreEqual('!', tree.Root.Right.Data);
+        }
     }
 }

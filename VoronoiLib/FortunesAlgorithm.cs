@@ -9,7 +9,7 @@ namespace VoronoiLib
 {
     public static class FortunesAlgorithm
     {
-        public static void Run(List<FortuneSite> sites)
+        public static List<VEdge> Run(List<FortuneSite> sites)
         {
             var eventQueue = new MinHeap<FortuneEvent>(sites.Count);
             sites.ForEach(s => eventQueue.Insert(new FortuneSiteEvent(s)));
@@ -21,16 +21,12 @@ namespace VoronoiLib
             {
                 var fEvent = eventQueue.Pop();
                 if (fEvent is FortuneSiteEvent)
-                    beachLine.AddBeachSection(((FortuneSiteEvent) fEvent).Site, eventQueue, edges);
+                    beachLine.AddBeachSection((FortuneSiteEvent) fEvent, eventQueue, edges);
                 else
-                    HandleCircleEvent((FortuneCircleEvent) fEvent, eventQueue, beachLine, edges);
+                    beachLine.RemoveBeachSection((FortuneCircleEvent) fEvent, eventQueue, edges);
             }
+            return edges;
         }
-
-        private static void HandleCircleEvent(FortuneCircleEvent fEvent, MinHeap<FortuneEvent> eventQueue, BeachLine beachLine,
-            object edges)
-        {
-            var leaf = fEvent.ToDelete;
-        }
+        
     }
 }
