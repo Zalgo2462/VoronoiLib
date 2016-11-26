@@ -28,7 +28,7 @@ namespace VoronoiLibTests
         }
 
         [TestMethod]
-        public void TestSuccessorOrderName()
+        public void TestInsertAtBack()
         {
             var tree = new RBTree<char>();
             var last = tree.InsertSuccessor(null, 'L');
@@ -43,7 +43,7 @@ namespace VoronoiLibTests
             Assert.AreEqual('g', tree.Root.Right.Left.Data);
             Assert.AreEqual('n', tree.Root.Right.Right.Data);
             Assert.AreEqual('!', tree.Root.Right.Right.Right.Data);
-            var traverse = tree.GetFirst(tree.Root);
+            var traverse = RBTree<char>.GetFirst(tree.Root);
             Assert.AreEqual('L', traverse.Data);
             traverse = traverse.Next;
             Assert.AreEqual('o', traverse.Data);
@@ -71,7 +71,7 @@ namespace VoronoiLibTests
             Assert.AreEqual(4, tree.Root.Right.Data);
             Assert.AreEqual(3, tree.Root.Left.Data);
             Assert.AreEqual(4, tree.Root.Left.Left.Data);
-            var traverse = tree.GetFirst(tree.Root);
+            var traverse = RBTree<int>.GetFirst(tree.Root);
             Assert.AreEqual(4, traverse.Data);
             traverse = traverse.Next;
             Assert.AreEqual(3, traverse.Data);
@@ -81,6 +81,26 @@ namespace VoronoiLibTests
             Assert.AreEqual(4, traverse.Data);
             traverse = traverse.Next;
             Assert.AreEqual(null, traverse);
+        }
+
+        [TestMethod]
+        public void TestInsertInMiddle()
+        {
+            var tree = new RBTree<int>();
+            var first = tree.InsertSuccessor(null, 1);
+            tree.InsertSuccessor(first, -1);
+            tree.InsertSuccessor(first, 2);
+            Assert.AreEqual(2, tree.Root.Data);
+            Assert.AreEqual(1, tree.Root.Left.Data);
+            Assert.AreEqual(-1, tree.Root.Right.Data);
+            first = RBTree<int>.GetFirst(tree.Root);
+            Assert.AreEqual(1, first.Data);
+            first = first.Next;
+            Assert.AreEqual(2, first.Data);
+            first = first.Next;
+            Assert.AreEqual(-1, first.Data);
+            first = first.Next;
+            Assert.AreEqual(null, first);
         }
     }
 }

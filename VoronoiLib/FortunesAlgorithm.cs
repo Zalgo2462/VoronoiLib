@@ -14,26 +14,20 @@ namespace VoronoiLib
             var eventQueue = new MinHeap<FortuneEvent>(sites.Count);
             sites.ForEach(s => eventQueue.Insert(new FortuneSiteEvent(s)));
             //init tree
-            var fTree = new FortuneTree();
-            var edges = new List<VEdge>();
+            var beachLine = new BeachLine();
+            var edges = new List<VHalfEdge>();
             //init edge list
             while (eventQueue.Count != 0)
             {
                 var fEvent = eventQueue.Pop();
                 if (fEvent is FortuneSiteEvent)
-                    HandleSiteEvent((FortuneSiteEvent) fEvent, eventQueue, fTree, edges);
+                    beachLine.AddBeachSection(((FortuneSiteEvent) fEvent).Site, eventQueue, edges);
                 else
-                    HandleCircleEvent((FortuneCircleEvent) fEvent, eventQueue, fTree, edges);
+                    HandleCircleEvent((FortuneCircleEvent) fEvent, eventQueue, beachLine, edges);
             }
         }
 
-        private static void HandleSiteEvent(FortuneSiteEvent fEvent, MinHeap<FortuneEvent> eventQueue, FortuneTree fTree,
-            List<VEdge> edges)
-        {
-            
-        }
-
-        private static void HandleCircleEvent(FortuneCircleEvent fEvent, MinHeap<FortuneEvent> eventQueue, FortuneTree fTree,
+        private static void HandleCircleEvent(FortuneCircleEvent fEvent, MinHeap<FortuneEvent> eventQueue, BeachLine beachLine,
             object edges)
         {
             var leaf = fEvent.ToDelete;

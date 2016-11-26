@@ -2,7 +2,7 @@
 
 namespace VoronoiLib
 {
-    public static class Parabola
+    public static class ParabolaMath
     {
         public static double EvalParabola(double focusX, double focusY, double directrix, double x)
         {
@@ -13,7 +13,7 @@ namespace VoronoiLib
         public static double IntersectParabolaX(double focus1X, double focus1Y, double focus2X, double focus2Y,
             double directrix)
         {
-            if (focus1Y.AprroxEqual(focus2Y))
+            if (focus1Y.ApproxEqual(focus2Y))
                 return (focus1X + focus2X)/2;
             //admittedly this is pure voodoo.
             //there is attached documentation for this function
@@ -24,9 +24,19 @@ namespace VoronoiLib
             return firstIntersect;
         }
 
-        public static bool AprroxEqual(this double value1, double value2)
+        public static bool ApproxEqual(this double value1, double value2)
         {
             return Math.Abs(value1 - value2) <= double.Epsilon * 1E100;
+        }
+
+        public static bool ApproxGreaterThanOrEqualTo(this double value1, double value2)
+        {
+            return value1 > value2 || value1.ApproxEqual(value2);
+        }
+
+        public static bool ApproxLessThanOrEqualTo(this double value1, double value2)
+        {
+            return value1 < value2 || value1.ApproxEqual(value2);
         }
     }
 }

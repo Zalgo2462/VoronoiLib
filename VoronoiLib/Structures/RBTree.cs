@@ -25,6 +25,7 @@ namespace VoronoiLib.Structures
             
         }
     }
+
     public class RBTree<T>
     {
         public RBTreeNode<T> Root { get; private set; }
@@ -296,14 +297,14 @@ namespace VoronoiLib.Structures
 
         }
 
-        public RBTreeNode<T> GetFirst(RBTreeNode<T> node)
+        public static RBTreeNode<T> GetFirst(RBTreeNode<T> node)
         {
             while (node.Left != null)
                 node = node.Left;
             return node;
         }
 
-        public RBTreeNode<T> GetLast(RBTreeNode<T> node)
+        public static RBTreeNode<T> GetLast(RBTreeNode<T> node)
         {
             while (node.Right != null)
                 node = node.Right;

@@ -41,10 +41,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Parabola.cs" />
+    <Compile Include="FortunesAlgorithm.cs" />
+    <Compile Include="Structures\BeachLine.cs" />
+    <Compile Include="ParabolaMath.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Structures\FortuneCircleEvent.cs" />
+    <Compile Include="Structures\FortuneEvent.cs" />
+    <Compile Include="Structures\FortuneSite.cs" />
+    <Compile Include="Structures\FortuneSiteEvent.cs" />
     <Compile Include="Structures\MinHeap.cs" />
     <Compile Include="Structures\RBTree.cs" />
+    <Compile Include="Structures\VEdge.cs" />
+    <Compile Include="Structures\VPoint.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

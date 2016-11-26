@@ -6,23 +6,29 @@ using System.Threading.Tasks;
 
 namespace VoronoiLib.Structures
 {
-    public class VEdge
+    public class VHalfEdge
     {
         public VPoint Start { get; }
-        public FortuneSite Left { get; }
-        public FortuneSite Right { get; }
-        public VEdge Neighbor { get; internal set; }
+        public FortuneSite Site { get; }
+        public double SlopeRise { get; }
+        public double SlopeRun { get; }
+        public double? Intercept { get; }
 
-        //called where 
-        //start = para, x= new site.x intersect
-        //left = para site
-        //right = new site
-        internal VEdge(VPoint start, FortuneSite left, FortuneSite right)
+        public VHalfEdge Neighbor { get; internal set; }
+
+        internal VHalfEdge(VPoint start, FortuneSite left, FortuneSite right)
         {
             Start = start;
-            Left = left;
-            Right = right;
-        }
+            Site = left;
+            //from negative reciprocal of slope of line from left to right
+            //ala m = (left.y -right.y / left.x - right.x)
+            SlopeRise = right.X - left.X;
+            SlopeRun = left.Y - right.Y;
+            Intercept = null;
 
+            if (SlopeRise.ApproxEqual(0) || SlopeRun.ApproxEqual(0)) return;
+            double m = SlopeRise/SlopeRun;
+            Intercept = start.Y - m*start.X;
+        }
     }
 }

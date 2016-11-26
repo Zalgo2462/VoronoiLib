@@ -8,13 +8,15 @@ namespace VoronoiLib.Structures
 {
     internal class FortuneCircleEvent : FortuneEvent
     {
-        internal FortuneSite Lowest { get; }
-        //internal FortuneBeachSection ToDelete { get; }
+        internal VPoint Lowest { get; }
+        internal double Center { get; }
+        internal RBTreeNode<BeachSection> ToDelete { get; }
 
-        internal FortuneCircleEvent(FortuneSite lowest/*, FortuneBeachSection toDelete*/)
+        internal FortuneCircleEvent(VPoint lowest, double center, RBTreeNode<BeachSection> toDelete)
         {
             Lowest = lowest;
-            //ToDelete = toDelete;
+            Center = center;
+            ToDelete = toDelete;
         }
 
         public int CompareTo(FortuneEvent other)
@@ -22,7 +24,7 @@ namespace VoronoiLib.Structures
             return Y.CompareTo(other.Y);
         }
 
-        public int X => Lowest.X;
-        public int Y => Lowest.Y;
+        public double X => Lowest.X;
+        public double Y => Lowest.Y;
     }
 }

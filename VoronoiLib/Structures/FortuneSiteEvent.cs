@@ -2,8 +2,8 @@
 {
     internal class FortuneSiteEvent : FortuneEvent
     {
-        public int X => Site.X;
-        public int Y => Site.Y;
+        public double X => Site.X;
+        public double Y => Site.Y;
         internal FortuneSite Site { get; }
 
         internal FortuneSiteEvent(FortuneSite site)
