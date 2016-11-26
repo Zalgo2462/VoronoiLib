@@ -1,6 +1,10 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using VoronoiLib;
+using VoronoiLib.Structures;
 
 namespace VoronoiDemo
 {
@@ -11,6 +15,9 @@ namespace VoronoiDemo
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        private Texture2D t;
+        private List<FortuneSite> points;
+        private List<VEdge> edges;
 
         public Game1()
         {
@@ -27,6 +34,17 @@ namespace VoronoiDemo
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
+            points = new List<FortuneSite>
+            {
+                new FortuneSite(200, 150),
+                new FortuneSite(200, 200),
+                new FortuneSite(100, 100),
+                new FortuneSite(300, 125),
+                new FortuneSite(500, 425),
+                new FortuneSite(190, 325),
+                new FortuneSite(600, 120)
+            };
+            edges = FortunesAlgorithm.Run(points);
 
             base.Initialize();
         }
@@ -39,8 +57,9 @@ namespace VoronoiDemo
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-
-            // TODO: use this.Content to load your game content here
+            // create 1x1 texture for line drawing
+            t = new Texture2D(GraphicsDevice, 1, 1);
+            t.SetData(new[] { Color.White });// fill the texture with white
         }
 
         /// <summary>
@@ -74,10 +93,70 @@ namespace VoronoiDemo
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
+            spriteBatch.Begin();
 
-            // TODO: Add your drawing code here
-
+            foreach (var point in points)
+                DrawPoint(spriteBatch, point);
+            foreach (var edge in edges)
+            {
+                DrawLine(spriteBatch, edge);
+                if (edge.Neighbor != null)
+                    DrawLine(spriteBatch, edge.Neighbor);
+            }
+            spriteBatch.End();
             base.Draw(gameTime);
+        }
+
+        private void DrawPoint(SpriteBatch sb, FortuneSite point)
+        {
+            var size = 10;
+            var r = new Rectangle((int) (point.X - size /2.0), (int) (point.Y - size /2.0), size, size);
+            sb.Draw(t, r, Color.Green);
+        }
+
+        private void DrawLine(SpriteBatch sb, VEdge vEdge)
+        {
+            float angle;
+            var rect = vEdge.ToRectangle(out angle);
+            sb.Draw(t,
+                rect, //width of line, change this to make thicker line
+                null,
+                Color.Red, //colour of line
+                angle,     //angle of line (calulated above)
+                new Vector2(0, 0), // point in line about which to rotate
+                SpriteEffects.None,
+                0);
+        }
+    }
+
+    internal static class FortuneMongoGameExtensions
+    {
+        public static Vector2 ToVector2(this FortuneSite site)
+        {
+            return new Vector2((float) site.X, (float) site.Y);
+        }
+
+        public static Vector2 ToVector2(this VPoint site)
+        {
+            return new Vector2((float)site.X, (float)site.Y);
+        }
+
+        public static Vector2 ToVector2(this VEdge edge)
+        {
+            if (edge.End != null)
+            {
+                return edge.End.ToVector2() - edge.Start.ToVector2();
+            }
+            //lazy way to do this 
+            return new Vector2((float)edge.SlopeRun, (float)edge.SlopeRise) * 100;
+        }
+
+
+        public static Rectangle ToRectangle(this VEdge edge, out float angle)
+        {
+            var vector = edge.ToVector2();
+            angle = (float)Math.Atan2(vector.Y, vector.X);
+            return new Rectangle((int) edge.Start.X, (int) edge.Start.Y, (int)vector.Length(), 1);
         }
     }
 }

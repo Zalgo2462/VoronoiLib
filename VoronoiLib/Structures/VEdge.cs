@@ -21,8 +21,8 @@ namespace VoronoiLib.Structures
             Right = right;
             //from negative reciprocal of slope of line from left to right
             //ala m = (left.y -right.y / left.x - right.x)
-            SlopeRise = right.X - left.X;
-            SlopeRun = left.Y - right.Y;
+            SlopeRise = left.X - right.X;
+            SlopeRun = -(left.Y - right.Y);
             Intercept = null;
 
             if (SlopeRise.ApproxEqual(0) || SlopeRun.ApproxEqual(0)) return;

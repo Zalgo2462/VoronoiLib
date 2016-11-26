@@ -162,7 +162,7 @@ namespace VoronoiLib.Structures
             next.Data.Edge.End = vertex;
 
             //create a new edge with start point at the vertex and assign it to next
-            var newEdge = new VEdge(vertex, prev.Data.Site, next.Data.Site);
+            var newEdge = new VEdge(vertex, next.Data.Site, prev.Data.Site);
             next.Data.Edge = newEdge;
             edges.Add(newEdge);
 
