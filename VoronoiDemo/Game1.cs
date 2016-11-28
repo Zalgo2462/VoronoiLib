@@ -52,7 +52,7 @@ namespace VoronoiDemo
 
             points = new List<FortuneSite>();
             var r = new Random();
-            for (var i = 0; i < 50000; i++)
+            for (var i = 0; i < 100000; i++)
             {
                 points.Add(new FortuneSite(r.Next(1, graphics.GraphicsDevice.Viewport.Width), r.Next(1, graphics.GraphicsDevice.Viewport.Height)));
             }
@@ -141,7 +141,7 @@ namespace VoronoiDemo
 
         private void DrawPoint(SpriteBatch sb, FortuneSite point)
         {
-            var size = 10;
+            var size = 1;
             var r = new Rectangle((int) (point.X - size /2.0), (int) (point.Y - size /2.0), size, size);
             sb.Draw(t, r, Color.Green);
         }
