@@ -56,11 +56,15 @@ namespace VoronoiLib.Structures
 
         public bool Remove(T item)
         {
-            int index = items.Select((t, i) => new {obj = t, index = i}).
-                Where(t => t.obj.Equals(item)).
-                Select(t => t.index).
-                DefaultIfEmpty(-1).
-                FirstOrDefault();
+            int index = -1;
+            for (var i = 0; i < Count; i++)
+            {
+                if (items[i].Equals(item))
+                {
+                    index = i;
+                    break;
+                }
+            }
 
             if (index == -1)
                 return false;

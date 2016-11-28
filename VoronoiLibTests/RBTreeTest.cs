@@ -145,5 +145,57 @@ namespace VoronoiLibTests
             Assert.AreEqual('a', tree.Root.Left.Data);
             Assert.AreEqual('!', tree.Root.Right.Data);
         }
+
+        [TestMethod]
+        public void TestRemoveInMiddle()
+        {
+            var tree = new RBTree<char>();
+            var last = tree.InsertSuccessor(null, 'L');
+            last = tree.InsertSuccessor(last, 'o');
+            var mid = last = tree.InsertSuccessor(last, 'g');
+            last = tree.InsertSuccessor(last, 'a');
+            last = tree.InsertSuccessor(last, 'n');
+            last = tree.InsertSuccessor(last, '!');
+
+            tree.RemoveNode(mid);
+            Assert.AreEqual('o', tree.Root.Data);
+            Assert.AreEqual('L', tree.Root.Left.Data);
+            Assert.AreEqual('n', tree.Root.Right.Data);
+            Assert.AreEqual('a', tree.Root.Right.Left.Data);
+            Assert.AreEqual('!', tree.Root.Right.Right.Data);
+        }
+
+        [TestMethod]
+        public void TestRemove()
+        {
+            var tree = new RBTree<int>();
+            for (var i = 0; i < 500; i++)
+            {
+                tree.InsertSuccessor(RBTree<int>.GetLast(tree.Root), i);
+                for (var j = 0; j <= i; j++)
+                {
+                    var traverse = RBTree<int>.GetFirst(tree.Root);
+                    for (var k = 0; k < j; k++)
+                    {
+                        traverse = traverse.Next;
+                    }
+                    //remove jth element
+                    tree.RemoveNode(traverse);
+                    var check = RBTree<int>.GetFirst(tree.Root);
+                    for (var k = 0; k < j; k++)
+                    {
+                        Assert.AreEqual(k, check.Data);
+                        check = check.Next;
+                    }
+                    for (var k = j; k < i; k++)
+                    {
+                        Assert.AreEqual(k + 1, check.Data);
+                        check = check.Next;
+                    }
+                    //readd
+                    tree.InsertSuccessor(traverse.Previous, traverse.Data);
+                }
+            }
+        }
     }
 }

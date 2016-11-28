@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -33,7 +34,7 @@ namespace VoronoiDemo
         /// </summary>
         protected override void Initialize()
         {
-            points = new List<FortuneSite>
+            /* = new List<FortuneSite>
             {
                 new FortuneSite(200, 150),
                 new FortuneSite(200, 200),
@@ -42,7 +43,20 @@ namespace VoronoiDemo
                 new FortuneSite(500, 425),
                 new FortuneSite(190, 325),
                 new FortuneSite(600, 120)
-            };
+            };*/
+            graphics.PreferredBackBufferHeight = graphics.GraphicsDevice.DisplayMode.Height;
+            graphics.PreferredBackBufferWidth = graphics.GraphicsDevice.DisplayMode.Width;
+            graphics.ToggleFullScreen();
+
+            points = new List<FortuneSite>();
+            var r = new Random();
+            for (var i = 0; i < 1000; i++)
+            {
+                points.Add(new FortuneSite(r.Next(1, graphics.GraphicsDevice.Viewport.Width), r.Next(1, graphics.GraphicsDevice.Viewport.Height)));
+            }
+            points.Add(new FortuneSite(200, 0));
+            points = points.Distinct().ToList();
+
             edges = FortunesAlgorithm.Run(points, 0, 0, graphics.GraphicsDevice.Viewport.Width, graphics.GraphicsDevice.Viewport.Height);
             base.Initialize();
         }

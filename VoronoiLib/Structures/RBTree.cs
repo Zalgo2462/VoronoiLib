@@ -94,6 +94,7 @@ namespace VoronoiLib.Structures
                     {
                         parent.Red = false;
                         aunt.Red = false;
+                        grandma.Red = true;
                         node = grandma;
                     }
                     else
@@ -229,11 +230,12 @@ namespace VoronoiLib.Structures
 
             // fair warning this code gets nasty
 
+            //how do we guarantee sibling is not null
+            RBTreeNode<T> sibling = null;
             do
             {
                 if (node == Root)
                     break;
-                RBTreeNode<T> sibling;
                 if (node == parent.Left)
                 {
                     sibling = parent.Right;
@@ -299,6 +301,8 @@ namespace VoronoiLib.Structures
 
         public static RBTreeNode<T> GetFirst(RBTreeNode<T> node)
         {
+            if (node == null)
+                return null;
             while (node.Left != null)
                 node = node.Left;
             return node;
@@ -306,6 +310,8 @@ namespace VoronoiLib.Structures
 
         public static RBTreeNode<T> GetLast(RBTreeNode<T> node)
         {
+            if (node == null)
+                return null;
             while (node.Right != null)
                 node = node.Right;
             return node;

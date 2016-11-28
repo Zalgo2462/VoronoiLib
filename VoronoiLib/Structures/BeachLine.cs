@@ -26,7 +26,7 @@ namespace VoronoiLib.Structures
             beachLine = new RBTree<BeachSection>();
         }
 
-        internal RBTreeNode<BeachSection> AddBeachSection(FortuneSiteEvent siteEvent, MinHeap<FortuneEvent> eventQueue, List<VEdge> edges)
+        internal void AddBeachSection(FortuneSiteEvent siteEvent, MinHeap<FortuneEvent> eventQueue, List<VEdge> edges)
         {
             var site = siteEvent.Site;
             var x = site.X;
@@ -101,7 +101,7 @@ namespace VoronoiLib.Structures
             //new beach section is the first beach section to be added
             if (leftSection == null && rightSection == null)
             {
-                return newSection;
+                return;
             }
 
             //main case:
@@ -128,14 +128,13 @@ namespace VoronoiLib.Structures
                 var intersection = new VPoint(x, y);
 
                 //create the two half edges corresponding to this intersection
-                var rightEdge = new VEdge(intersection, leftSection.Data.Site, site);
                 var leftEdge = new VEdge(intersection, site, leftSection.Data.Site);
+                var rightEdge = new VEdge(intersection, leftSection.Data.Site, site);
                 leftEdge.Neighbor = rightEdge;
 
                 //put the edge in the list
                 edges.Add(leftEdge);
 
-                //TODO: prove why this is okay...
                 newSection.Data.Edge = leftEdge;
                 rightSection.Data.Edge = rightEdge;
 
@@ -143,29 +142,112 @@ namespace VoronoiLib.Structures
                 CheckCircle(rightSection, eventQueue);
             }
 
-            //we will handle edge cases later
-            return newSection;
+            //site is the last beach section on the beach line
+            //this can only happen if all previous sites
+            //had the same y value
+            else if (leftSection != null && rightSection == null)
+            {
+                //create an edge between leftSection and the new section
+                //TODO: experiment with this
+                //seed 123 count 3000
+            }
+
+            //site is directly above a break point
+            else if (leftSection != null && leftSection != rightSection)
+            {
+                //remove false alarms
+                if (leftSection.Data.CircleEvent != null)
+                {
+                    eventQueue.Remove(leftSection.Data.CircleEvent);
+                    leftSection.Data.CircleEvent = null;
+                }
+
+                if (rightSection.Data.CircleEvent != null)
+                {
+                    eventQueue.Remove(rightSection.Data.CircleEvent);
+                    rightSection.Data.CircleEvent = null;
+                }
+
+                //the breakpoint will dissapear if we add this site
+                //which means we will create an edge
+                //we treat this very similar to a circle event since
+                //an edge is finishing at the center of the circle
+                //created by circumscribing the left center and right
+                //sites
+
+                //bring a to the origin
+                var leftSite = leftSection.Data.Site;
+                var ax = leftSite.X;
+                var ay = leftSite.Y;
+                var bx = site.X - ax;
+                var by = site.Y - ay;
+
+                var rightSite = rightSection.Data.Site;
+                var cx = rightSite.X - ax;
+                var cy = rightSite.Y - ay;
+                var d = bx*cy - by*cx;
+                var magnitudeB = bx*bx + by*by;
+                var magnitudeC = cx*cx + cy*cy;
+                var vertex = new VPoint(
+                    (cy*magnitudeB - by * magnitudeC)/(2*d) + ax,
+                    (bx*magnitudeC - cx * magnitudeB)/(2*d) + ay);
+
+                rightSection.Data.Edge.End = vertex;
+
+                //next we create a two new edges
+                newSection.Data.Edge = new VEdge(vertex, site, leftSection.Data.Site);
+                rightSection.Data.Edge = new VEdge(vertex, rightSection.Data.Site, site);
+
+                CheckCircle(leftSection, eventQueue);
+                CheckCircle(rightSection, eventQueue);
+            }
         }
 
         internal void RemoveBeachSection(FortuneCircleEvent circle, MinHeap<FortuneEvent> eventQueue, List<VEdge> edges)
         {
+            //todo: check if multiple edges end at this circle
             var section = circle.ToDelete;
             var x = circle.X;
             var y = circle.YCenter;
             var vertex = new VPoint(x, y);
 
-            var prev = section.Previous;
-            var next = section.Next;
+            //multiple edges could end here
+            var toBeRemoved = new List<RBTreeNode<BeachSection>> {section};
 
-            //Tie both segments to the new vertex
-            section.Data.Edge.End = vertex;
-            next.Data.Edge.End = vertex;
+            //look left
+            var prev = section.Previous;
+            while (prev.Data.CircleEvent != null && 
+                (x - prev.Data.CircleEvent.X).ApproxEqual(0) && 
+                (y - prev.Data.CircleEvent.Y).ApproxEqual(0))
+            {
+                toBeRemoved.Add(prev);
+                prev = prev.Previous;
+            }
+
+            var next = section.Next;
+            while (next.Data.CircleEvent != null &&
+                (x - next.Data.CircleEvent.X).ApproxEqual(0) &&
+                (y - next.Data.CircleEvent.Y).ApproxEqual(0))
+            {
+                toBeRemoved.Add(next);
+                next = next.Next;
+            }
+
+            //odds are this double writes a few edges but this is clean...
+            foreach (var remove in toBeRemoved)
+            {
+                remove.Data.Edge.End = vertex;
+                remove.Next.Data.Edge.End = vertex;
+                eventQueue.Remove(remove.Data.CircleEvent);
+                remove.Data.CircleEvent = null;
+            }
 
             //create a new edge with start point at the vertex and assign it to next
             var newEdge = new VEdge(vertex, next.Data.Site, prev.Data.Site);
             next.Data.Edge = newEdge;
             edges.Add(newEdge);
-
+            
+            //need to delete all upcoming circle events with this node
             if (prev.Data.CircleEvent != null)
             {
                 eventQueue.Remove(prev.Data.CircleEvent);
