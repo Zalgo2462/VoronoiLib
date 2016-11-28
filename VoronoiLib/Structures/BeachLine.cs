@@ -221,7 +221,7 @@ namespace VoronoiLib.Structures
             var vertex = new VPoint(x, y);
 
             //multiple edges could end here
-            var toBeRemoved = new List<RBTreeNode<BeachSection>> {section};
+            var toBeRemoved = new List<RBTreeNode<BeachSection>>();
 
             //look left
             var prev = section.Previous;
@@ -241,6 +241,10 @@ namespace VoronoiLib.Structures
                 toBeRemoved.Add(next);
                 next = next.Next;
             }
+
+            section.Data.Edge.End = vertex;
+            section.Next.Data.Edge.End = vertex;
+            section.Data.CircleEvent = null;
 
             //odds are this double writes a few edges but this is clean...
             foreach (var remove in toBeRemoved)

@@ -18,7 +18,6 @@ namespace VoronoiLib
             var edges = new LinkedList<VEdge>();
             var deleted = new HashSet<FortuneCircleEvent>();
 
-            //TODO: Figure out memory leak with deleted...
             //init edge list
             while (eventQueue.Count != 0)
             {
@@ -33,6 +32,7 @@ namespace VoronoiLib
                     }
                     else
                     {
+                        //previously processed is being added to deleted...
                         beachLine.RemoveBeachSection((FortuneCircleEvent) fEvent, eventQueue, deleted, edges);
                     }
                 }
