@@ -150,6 +150,8 @@ namespace VoronoiLib.Structures
                 //create an edge between leftSection and the new section
                 //TODO: experiment with this
                 //seed 123 count 3000
+                //grab mid point cast a ray upward
+                //start edge downward and set on current section
             }
 
             //site is directly above a break point
@@ -205,7 +207,6 @@ namespace VoronoiLib.Structures
 
         internal void RemoveBeachSection(FortuneCircleEvent circle, MinHeap<FortuneEvent> eventQueue, List<VEdge> edges)
         {
-            //todo: check if multiple edges end at this circle
             var section = circle.ToDelete;
             var x = circle.X;
             var y = circle.YCenter;
