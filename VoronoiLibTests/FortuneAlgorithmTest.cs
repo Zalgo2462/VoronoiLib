@@ -17,28 +17,24 @@ namespace VoronoiLibTests
                 new FortuneSite(200, 200),
                 new FortuneSite(200, 150)
             };
-            var edges = FortunesAlgorithm.Run(points);
+            var edges = FortunesAlgorithm.Run(points, 0 , 0, 600, 600);
             //edge 1
-            Assert.AreEqual(200, edges[0].Start.X);
-            Assert.AreEqual(25, edges[0].Start.Y);
+            Assert.AreEqual(212.5, edges[0].Start.X);
+            Assert.AreEqual(0, edges[0].Start.Y);
             Assert.AreEqual(125, edges[0].End.X);
             Assert.AreEqual(175, edges[0].End.Y);
-            Assert.IsNotNull(edges[0].Neighbor);
-            Assert.AreEqual(425, edges[0].Neighbor.Intercept);
 
             //edge 2
-            Assert.AreEqual(200, edges[1].Start.X);
+            Assert.AreEqual(600, edges[1].Start.X);
             Assert.AreEqual(175, edges[1].Start.Y);
             Assert.AreEqual(125, edges[1].End.X);
             Assert.AreEqual(175, edges[1].End.Y);
-            Assert.IsNotNull(edges[1].Neighbor);
-            Assert.IsNull(edges[1].Neighbor.Intercept);
 
             //edge 3
             Assert.AreEqual(125, edges[2].Start.X);
             Assert.AreEqual(175, edges[2].Start.Y);
-            Assert.AreEqual(300, edges[2].Intercept);
-            Assert.IsNull(edges[2].Neighbor);
+            Assert.AreEqual(0, edges[2].End.X);
+            Assert.AreEqual(300, edges[2].End.Y);
         }
     }
 }

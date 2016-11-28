@@ -33,7 +33,6 @@ namespace VoronoiDemo
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
             points = new List<FortuneSite>
             {
                 new FortuneSite(200, 150),
@@ -44,8 +43,7 @@ namespace VoronoiDemo
                 new FortuneSite(190, 325),
                 new FortuneSite(600, 120)
             };
-            edges = FortunesAlgorithm.Run(points);
-
+            edges = FortunesAlgorithm.Run(points, 0, 0, graphics.GraphicsDevice.Viewport.Width, graphics.GraphicsDevice.Viewport.Height);
             base.Initialize();
         }
 
@@ -100,8 +98,6 @@ namespace VoronoiDemo
             foreach (var edge in edges)
             {
                 DrawLine(spriteBatch, edge);
-                if (edge.Neighbor != null)
-                    DrawLine(spriteBatch, edge.Neighbor);
             }
             spriteBatch.End();
             base.Draw(gameTime);
@@ -143,12 +139,7 @@ namespace VoronoiDemo
 
         public static Vector2 ToVector2(this VEdge edge)
         {
-            if (edge.End != null)
-            {
-                return edge.End.ToVector2() - edge.Start.ToVector2();
-            }
-            //lazy way to do this 
-            return new Vector2((float)edge.SlopeRun, (float)edge.SlopeRise) * 100;
+            return edge.End.ToVector2() - edge.Start.ToVector2();
         }
 
 

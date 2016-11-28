@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace VoronoiLib.Structures
+﻿namespace VoronoiLib.Structures
 {
     public class VEdge
     {
@@ -8,9 +6,10 @@ namespace VoronoiLib.Structures
         public VPoint End { get; internal set; }
         public FortuneSite Left { get; }
         public FortuneSite Right { get; }
-        public double SlopeRise { get; }
-        public double SlopeRun { get; }
-        public double? Intercept { get; }
+        internal double SlopeRise { get; }
+        internal double SlopeRun { get; }
+        internal double? Slope { get; }
+        internal double? Intercept { get; }
 
         public VEdge Neighbor { get; internal set; }
 
@@ -26,8 +25,8 @@ namespace VoronoiLib.Structures
             Intercept = null;
 
             if (SlopeRise.ApproxEqual(0) || SlopeRun.ApproxEqual(0)) return;
-            var m = SlopeRise/SlopeRun;
-            Intercept = start.Y - m*start.X;
+            Slope = SlopeRise/SlopeRun;
+            Intercept = start.Y - Slope*start.X;
         }
     }
 }
