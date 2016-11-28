@@ -146,12 +146,17 @@ namespace VoronoiLib.Structures
             //this can only happen if all previous sites
             //had the same y value
             else if (leftSection != null && rightSection == null)
-            {
-                //create an edge between leftSection and the new section
-                //TODO: experiment with this
-                //seed 123 count 3000
-                //grab mid point cast a ray upward
-                //start edge downward and set on current section
+            {/*
+                var start = new VPoint((leftSection.Data.Site.X + site.X)/ 2, directrix);
+                var infEdge = new VEdge(start, leftSection.Data.Site, site);
+                var newEdge = new VEdge(start, site, leftSection.Data.Site);
+                newEdge.Neighbor = infEdge;
+
+                edges.Add(newEdge);
+                newSection.Data.Edge = newEdge;
+                */
+
+                //cant check circles since they are colinear
             }
 
             //site is directly above a break point

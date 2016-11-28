@@ -54,6 +54,8 @@ namespace VoronoiLib.Structures
             return items[0];
         }
 
+        //TODO: stop using the remove on the heap as it goes o(N^2)
+
         public bool Remove(T item)
         {
             int index = -1;

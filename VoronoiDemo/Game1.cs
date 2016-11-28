@@ -5,6 +5,7 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using MonoGame.Utilities.Png;
 using VoronoiLib;
 using VoronoiLib.Structures;
 
@@ -50,13 +51,34 @@ namespace VoronoiDemo
             graphics.ToggleFullScreen();
 
             points = new List<FortuneSite>();
-            var r = new Random(123);
-            for (var i = 0; i < 10000; i++)
+            var r = new Random();
+            for (var i = 0; i < 20000; i++)
             {
                 points.Add(new FortuneSite(r.Next(1, graphics.GraphicsDevice.Viewport.Width), r.Next(1, graphics.GraphicsDevice.Viewport.Height)));
             }
             points.Add(new FortuneSite(200, 0));
-            points = points.GroupBy(p => new {p.X, p.Y}).Select(g => g.First()).ToList();
+            points.Sort((p1, p2) =>
+            {
+                if (p1.X.ApproxEqual(p2.X))
+                {
+                    if (p1.Y.ApproxEqual(p2.Y))
+                        return 0;
+                    if (p1.Y < p2.Y)
+                        return -1;
+                    return 1;
+                }
+                if (p1.X < p2.X)
+                    return -1;
+                return 1;
+            });
+            for (var i = points.Count - 1; i > 0; i--)
+            {
+                if (points[i].X.ApproxEqual(points[i - 1].X) &&
+                    points[i].Y.ApproxEqual(points[i - 1].Y))
+                {
+                    points.RemoveAt(i);
+                }
+            }
             edges = FortunesAlgorithm.Run(points, 0, 0, graphics.GraphicsDevice.Viewport.Width, graphics.GraphicsDevice.Viewport.Height);
             base.Initialize();
         }
