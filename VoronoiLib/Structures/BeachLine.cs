@@ -26,7 +26,7 @@ namespace VoronoiLib.Structures
             beachLine = new RBTree<BeachSection>();
         }
 
-        internal void AddBeachSection(FortuneSiteEvent siteEvent, MinHeap<FortuneEvent> eventQueue, List<VEdge> edges)
+        internal void AddBeachSection(FortuneSiteEvent siteEvent, MinHeap<FortuneEvent> eventQueue, HashSet<FortuneCircleEvent> deleted, List<VEdge> edges)
         {
             var site = siteEvent.Site;
             var x = site.X;
@@ -114,7 +114,7 @@ namespace VoronoiLib.Structures
                 //remove it
                 if (leftSection.Data.CircleEvent != null)
                 {
-                    eventQueue.Remove(leftSection.Data.CircleEvent);
+                    deleted.Add(leftSection.Data.CircleEvent);
                     leftSection.Data.CircleEvent = null;
                 }
 
@@ -165,13 +165,13 @@ namespace VoronoiLib.Structures
                 //remove false alarms
                 if (leftSection.Data.CircleEvent != null)
                 {
-                    eventQueue.Remove(leftSection.Data.CircleEvent);
+                    deleted.Add(leftSection.Data.CircleEvent);
                     leftSection.Data.CircleEvent = null;
                 }
 
                 if (rightSection.Data.CircleEvent != null)
                 {
-                    eventQueue.Remove(rightSection.Data.CircleEvent);
+                    deleted.Add(rightSection.Data.CircleEvent);
                     rightSection.Data.CircleEvent = null;
                 }
 
@@ -210,7 +210,7 @@ namespace VoronoiLib.Structures
             }
         }
 
-        internal void RemoveBeachSection(FortuneCircleEvent circle, MinHeap<FortuneEvent> eventQueue, List<VEdge> edges)
+        internal void RemoveBeachSection(FortuneCircleEvent circle, MinHeap<FortuneEvent> eventQueue, HashSet<FortuneCircleEvent> deleted, List<VEdge> edges)
         {
             var section = circle.ToDelete;
             var x = circle.X;
@@ -244,7 +244,7 @@ namespace VoronoiLib.Structures
             {
                 remove.Data.Edge.End = vertex;
                 remove.Next.Data.Edge.End = vertex;
-                eventQueue.Remove(remove.Data.CircleEvent);
+                deleted.Add(remove.Data.CircleEvent);
                 remove.Data.CircleEvent = null;
             }
 
@@ -256,12 +256,12 @@ namespace VoronoiLib.Structures
             //need to delete all upcoming circle events with this node
             if (prev.Data.CircleEvent != null)
             {
-                eventQueue.Remove(prev.Data.CircleEvent);
+                deleted.Add(prev.Data.CircleEvent);
                 prev.Data.CircleEvent = null;
             }
             if (next.Data.CircleEvent != null)
             {
-                eventQueue.Remove(next.Data.CircleEvent);
+                deleted.Add(next.Data.CircleEvent);
                 next.Data.CircleEvent = null;
             }
 

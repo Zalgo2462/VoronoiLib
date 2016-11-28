@@ -11,19 +11,29 @@ namespace VoronoiLib
     {
         public static List<VEdge> Run(List<FortuneSite> sites, double minX, double minY, double maxX, double maxY)
         {
-            var eventQueue = new MinHeap<FortuneEvent>(sites.Count);
+            var eventQueue = new MinHeap<FortuneEvent>(5* sites.Count);
             sites.ForEach(s => eventQueue.Insert(new FortuneSiteEvent(s)));
             //init tree
             var beachLine = new BeachLine();
             var edges = new List<VEdge>();
+            var deleted = new HashSet<FortuneCircleEvent>();
             //init edge list
             while (eventQueue.Count != 0)
             {
                 var fEvent = eventQueue.Pop();
                 if (fEvent is FortuneSiteEvent)
-                    beachLine.AddBeachSection((FortuneSiteEvent) fEvent, eventQueue, edges);
+                    beachLine.AddBeachSection((FortuneSiteEvent) fEvent, eventQueue, deleted, edges);
                 else
-                    beachLine.RemoveBeachSection((FortuneCircleEvent) fEvent, eventQueue, edges);
+                {
+                    if (deleted.Contains((FortuneCircleEvent) fEvent))
+                    {
+                        deleted.Remove((FortuneCircleEvent) fEvent);
+                    }
+                    else
+                    {
+                        beachLine.RemoveBeachSection((FortuneCircleEvent) fEvent, eventQueue, deleted, edges);
+                    }
+                }
             }
             foreach (var edge in edges)
             {

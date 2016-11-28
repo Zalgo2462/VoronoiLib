@@ -52,7 +52,7 @@ namespace VoronoiDemo
 
             points = new List<FortuneSite>();
             var r = new Random();
-            for (var i = 0; i < 20000; i++)
+            for (var i = 0; i < 50000; i++)
             {
                 points.Add(new FortuneSite(r.Next(1, graphics.GraphicsDevice.Viewport.Width), r.Next(1, graphics.GraphicsDevice.Viewport.Height)));
             }
