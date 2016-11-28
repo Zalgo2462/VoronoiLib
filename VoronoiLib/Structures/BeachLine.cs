@@ -26,7 +26,7 @@ namespace VoronoiLib.Structures
             beachLine = new RBTree<BeachSection>();
         }
 
-        internal void AddBeachSection(FortuneSiteEvent siteEvent, MinHeap<FortuneEvent> eventQueue, HashSet<FortuneCircleEvent> deleted, List<VEdge> edges)
+        internal void AddBeachSection(FortuneSiteEvent siteEvent, MinHeap<FortuneEvent> eventQueue, HashSet<FortuneCircleEvent> deleted, LinkedList<VEdge> edges)
         {
             var site = siteEvent.Site;
             var x = site.X;
@@ -133,7 +133,7 @@ namespace VoronoiLib.Structures
                 leftEdge.Neighbor = rightEdge;
 
                 //put the edge in the list
-                edges.Add(leftEdge);
+                edges.AddFirst(leftEdge);
 
                 newSection.Data.Edge = leftEdge;
                 rightSection.Data.Edge = rightEdge;
@@ -205,12 +205,15 @@ namespace VoronoiLib.Structures
                 newSection.Data.Edge = new VEdge(vertex, site, leftSection.Data.Site);
                 rightSection.Data.Edge = new VEdge(vertex, rightSection.Data.Site, site);
 
+                edges.AddFirst(newSection.Data.Edge);
+                edges.AddFirst(rightSection.Data.Edge);
+
                 CheckCircle(leftSection, eventQueue);
                 CheckCircle(rightSection, eventQueue);
             }
         }
 
-        internal void RemoveBeachSection(FortuneCircleEvent circle, MinHeap<FortuneEvent> eventQueue, HashSet<FortuneCircleEvent> deleted, List<VEdge> edges)
+        internal void RemoveBeachSection(FortuneCircleEvent circle, MinHeap<FortuneEvent> eventQueue, HashSet<FortuneCircleEvent> deleted, LinkedList<VEdge> edges)
         {
             var section = circle.ToDelete;
             var x = circle.X;
@@ -251,7 +254,7 @@ namespace VoronoiLib.Structures
             //create a new edge with start point at the vertex and assign it to next
             var newEdge = new VEdge(vertex, next.Data.Site, prev.Data.Site);
             next.Data.Edge = newEdge;
-            edges.Add(newEdge);
+            edges.AddFirst(newEdge);
             
             //need to delete all upcoming circle events with this node
             if (prev.Data.CircleEvent != null)
