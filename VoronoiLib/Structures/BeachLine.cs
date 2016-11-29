@@ -135,9 +135,15 @@ namespace VoronoiLib.Structures
                 //put the edge in the list
                 edges.AddFirst(leftEdge);
 
+                //store the left edge on each arc section
                 newSection.Data.Edge = leftEdge;
                 rightSection.Data.Edge = rightEdge;
+                
+                //store neighbors for delaunay
+                leftSection.Data.Site.Neighbors.Add(newSection.Data.Site);
+                newSection.Data.Site.Neighbors.Add(leftSection.Data.Site);
 
+                //create circle events
                 CheckCircle(leftSection, eventQueue);
                 CheckCircle(rightSection, eventQueue);
             }
@@ -208,6 +214,13 @@ namespace VoronoiLib.Structures
                 edges.AddFirst(newSection.Data.Edge);
                 edges.AddFirst(rightSection.Data.Edge);
 
+                //add neighbors for delaunay
+                newSection.Data.Site.Neighbors.Add(leftSection.Data.Site);
+                leftSection.Data.Site.Neighbors.Add(newSection.Data.Site);
+
+                newSection.Data.Site.Neighbors.Add(rightSection.Data.Site);
+                rightSection.Data.Site.Neighbors.Add(newSection.Data.Site);
+
                 CheckCircle(leftSection, eventQueue);
                 CheckCircle(rightSection, eventQueue);
             }
@@ -255,11 +268,7 @@ namespace VoronoiLib.Structures
                 remove.Data.CircleEvent = null;
             }
 
-            //create a new edge with start point at the vertex and assign it to next
-            var newEdge = new VEdge(vertex, next.Data.Site, prev.Data.Site);
-            next.Data.Edge = newEdge;
-            edges.AddFirst(newEdge);
-            
+
             //need to delete all upcoming circle events with this node
             if (prev.Data.CircleEvent != null)
             {
@@ -272,7 +281,22 @@ namespace VoronoiLib.Structures
                 next.Data.CircleEvent = null;
             }
 
+
+            //create a new edge with start point at the vertex and assign it to next
+            var newEdge = new VEdge(vertex, next.Data.Site, prev.Data.Site);
+            next.Data.Edge = newEdge;
+            edges.AddFirst(newEdge);
+
+            //add neighbors for delaunay
+            prev.Data.Site.Neighbors.Add(next.Data.Site);
+            next.Data.Site.Neighbors.Add(prev.Data.Site);
+            
+            //remove the sectionfrom the tree
             beachLine.RemoveNode(section);
+            foreach (var remove in toBeRemoved)
+            {
+                beachLine.RemoveNode(remove);
+            }
 
             CheckCircle(prev, eventQueue);
             CheckCircle(next, eventQueue);

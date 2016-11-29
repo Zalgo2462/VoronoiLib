@@ -21,6 +21,7 @@ namespace VoronoiDemo
         private Texture2D t;
         private List<FortuneSite> points;
         private LinkedList<VEdge> edges;
+        private List<Tuple<Vector2, Vector2>> delaunay;
 
         public Game1()
         {
@@ -28,31 +29,15 @@ namespace VoronoiDemo
             Content.RootDirectory = "Content";
         }
 
-        /// <summary>
-        /// Allows the game to perform any initialization it needs to before starting to run.
-        /// This is where it can query for any required services and load any non-graphic
-        /// related content.  Calling base.Initialize will enumerate through any components
-        /// and initialize them as well.
-        /// </summary>
         protected override void Initialize()
         {
-            /* = new List<FortuneSite>
-            {
-                new FortuneSite(200, 150),
-                new FortuneSite(200, 200),
-                new FortuneSite(100, 100),
-                new FortuneSite(300, 125),
-                new FortuneSite(500, 425),
-                new FortuneSite(190, 325),
-                new FortuneSite(600, 120)
-            };*/
             graphics.PreferredBackBufferHeight = graphics.GraphicsDevice.DisplayMode.Height;
             graphics.PreferredBackBufferWidth = graphics.GraphicsDevice.DisplayMode.Width;
             graphics.ToggleFullScreen();
 
             points = new List<FortuneSite>();
-            var r = new Random(123);
-            for (var i = 0; i < 10000; i++)
+            var r = new Random();
+            for (var i = 0; i < 500; i++)
             {
                 points.Add(new FortuneSite(r.Next(1, graphics.GraphicsDevice.Viewport.Width), r.Next(1, graphics.GraphicsDevice.Viewport.Height)));
             }
@@ -80,13 +65,22 @@ namespace VoronoiDemo
                 }
             }
             edges = FortunesAlgorithm.Run(points, 0, 0, graphics.GraphicsDevice.Viewport.Width, graphics.GraphicsDevice.Viewport.Height);
+            delaunay = new List<Tuple<Vector2, Vector2>>();
+
+            foreach (var site in points)
+            {
+                foreach (var neighbor in site.Neighbors)
+                {
+                    delaunay.Add(
+                        new Tuple<Vector2, Vector2>(
+                        new Vector2((float) site.X, (float) site.Y),
+                        new Vector2((float) neighbor.X, (float) neighbor.Y)
+                        ));
+                }
+            }
             base.Initialize();
         }
-
-        /// <summary>
-        /// LoadContent will be called once per game and is the place to load
-        /// all of your content.
-        /// </summary>
+        
         protected override void LoadContent()
         {
             // Create a new SpriteBatch, which can be used to draw textures.
@@ -95,45 +89,36 @@ namespace VoronoiDemo
             t = new Texture2D(GraphicsDevice, 1, 1);
             t.SetData(new[] { Color.White });// fill the texture with white
         }
-
-        /// <summary>
-        /// UnloadContent will be called once per game and is the place to unload
-        /// game-specific content.
-        /// </summary>
+        
         protected override void UnloadContent()
         {
-            // TODO: Unload any non ContentManager content here
         }
-
-        /// <summary>
-        /// Allows the game to run logic such as updating the world,
-        /// checking for collisions, gathering input, and playing audio.
-        /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
+        
         protected override void Update(GameTime gameTime)
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            // TODO: Add your update logic here
 
             base.Update(gameTime);
         }
 
-        /// <summary>
-        /// This is called when the game should draw itself.
-        /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
             spriteBatch.Begin();
-
-            foreach (var point in points)
-                DrawPoint(spriteBatch, point);
+            
             foreach (var edge in edges)
             {
                 DrawLine(spriteBatch, edge);
+            }
+            foreach (var edge in delaunay)
+            {
+                DrawLine(spriteBatch, edge);
+            }
+            foreach (var point in points)
+            {
+                DrawPoint(spriteBatch, point);
             }
             spriteBatch.End();
             base.Draw(gameTime);
@@ -156,6 +141,21 @@ namespace VoronoiDemo
                 Color.Red, //colour of line
                 angle,     //angle of line (calulated above)
                 new Vector2(0, 0), // point in line about which to rotate
+                SpriteEffects.None,
+                0);
+        }
+
+        private void DrawLine(SpriteBatch sb, Tuple<Vector2, Vector2> edge)
+        {
+            var diff = edge.Item2 - edge.Item1;
+            var angle = Math.Atan2(diff.Y, diff.X);
+            var rect = new Rectangle((int) edge.Item1.X, (int) edge.Item1.Y, (int) diff.Length(), 1);
+            sb.Draw(t,
+                rect,
+                null,
+                Color.YellowGreen,
+                (float) angle,
+                new Vector2(0, 0),
                 SpriteEffects.None,
                 0);
         }

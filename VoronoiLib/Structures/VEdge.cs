@@ -18,6 +18,11 @@
             Start = start;
             Left = left;
             Right = right;
+            
+            //for bounding box edges
+            if (left == null || right == null)
+                return;
+
             //from negative reciprocal of slope of line from left to right
             //ala m = (left.y -right.y / left.x - right.x)
             SlopeRise = left.X - right.X;
