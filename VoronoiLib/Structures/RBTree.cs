@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-// credit https://github.com/mdally/Voronoi/blob/master/src/RBTree.h MIT LICENSE
+﻿// credit https://github.com/mdally/Voronoi/blob/master/src/RBTree.h MIT LICENSE
 
 namespace VoronoiLib.Structures
 {

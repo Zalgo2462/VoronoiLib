@@ -13,7 +13,8 @@
 
         public int CompareTo(FortuneEvent other)
         {
-            return Y.CompareTo(other.Y);
+            var c = Y.CompareTo(other.Y);
+            return c == 0 ? X.CompareTo(other.X) : c;
         }
      
     }

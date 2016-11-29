@@ -152,16 +152,19 @@ namespace VoronoiLib.Structures
             //this can only happen if all previous sites
             //had the same y value
             else if (leftSection != null && rightSection == null)
-            {/*
+            {
                 var start = new VPoint((leftSection.Data.Site.X + site.X)/ 2, directrix);
                 var infEdge = new VEdge(start, leftSection.Data.Site, site);
                 var newEdge = new VEdge(start, site, leftSection.Data.Site);
+
                 newEdge.Neighbor = infEdge;
+                edges.AddFirst(newEdge);
 
-                edges.Add(newEdge);
+                leftSection.Data.Site.Neighbors.Add(newSection.Data.Site);
+                newSection.Data.Site.Neighbors.Add(leftSection.Data.Site);
+
                 newSection.Data.Edge = newEdge;
-                */
-
+                
                 //cant check circles since they are colinear
             }
 

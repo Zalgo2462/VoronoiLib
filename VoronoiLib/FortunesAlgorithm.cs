@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
 using VoronoiLib.Structures;
 
 namespace VoronoiLib
@@ -55,6 +52,7 @@ namespace VoronoiLib
             return edges;
         }
 
+        //combination of personal ray clipping alg and cohen sutherland
         private static bool ClipEdge(VEdge edge, double minX, double minY, double maxX, double maxY)
         {
             var accept = false;
@@ -139,7 +137,7 @@ namespace VoronoiLib
             }
             return accept;
         }
-
+        
         private static int ComputeOutCode(double x, double y, double minX, double minY, double maxX, double maxY)
         {
             int code = 0;
@@ -226,6 +224,8 @@ namespace VoronoiLib
             }
             
             //works for outside
+            Debug.Assert(edge.Slope != null, "edge.Slope != null");
+            Debug.Assert(edge.Intercept != null, "edge.Intercept != null");
             var topX = new VPoint(CalcX(edge.Slope.Value, maxY, edge.Intercept.Value), maxY);
             var bottomX = new VPoint(CalcX(edge.Slope.Value, minY, edge.Intercept.Value), minY);
             var leftY = new VPoint(minX, CalcY(edge.Slope.Value, minX, edge.Intercept.Value));

@@ -36,12 +36,18 @@ namespace VoronoiDemo
             graphics.ToggleFullScreen();
 
             points = new List<FortuneSite>();
+            
             var r = new Random();
+            var w = graphics.GraphicsDevice.Viewport.Width;
+            var h = graphics.GraphicsDevice.Viewport.Height;
             for (var i = 0; i < 500; i++)
             {
-                points.Add(new FortuneSite(r.Next(1, graphics.GraphicsDevice.Viewport.Width), r.Next(1, graphics.GraphicsDevice.Viewport.Height)));
+                points.Add(new FortuneSite(
+                    r.Next((int) (w/20.0), (int) (19*w/20.0)),
+                    r.Next((int) (h/20.0), (int) (19*h/20.0))));
             }
-            points.Add(new FortuneSite(200, 0));
+
+            //uniq the points
             points.Sort((p1, p2) =>
             {
                 if (p1.X.ApproxEqual(p2.X))
@@ -56,14 +62,19 @@ namespace VoronoiDemo
                     return -1;
                 return 1;
             });
-            for (var i = points.Count - 1; i > 0; i--)
+
+            var unique = new List<FortuneSite>(points.Count /2);
+            FortuneSite last = null;
+            foreach (FortuneSite point in points)
             {
-                if (points[i].X.ApproxEqual(points[i - 1].X) &&
-                    points[i].Y.ApproxEqual(points[i - 1].Y))
+                if (last != point)
                 {
-                    points.RemoveAt(i);
+                    unique.Add(point);
+                    last = point;
                 }
             }
+            points = unique;
+
             edges = FortunesAlgorithm.Run(points, 0, 0, graphics.GraphicsDevice.Viewport.Width, graphics.GraphicsDevice.Viewport.Height);
             delaunay = new List<Tuple<Vector2, Vector2>>();
 

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace VoronoiLib.Structures
+﻿namespace VoronoiLib.Structures
 {
     internal class FortuneCircleEvent : FortuneEvent
     {
@@ -21,7 +15,8 @@ namespace VoronoiLib.Structures
 
         public int CompareTo(FortuneEvent other)
         {
-            return Y.CompareTo(other.Y);
+            var c = Y.CompareTo(other.Y);
+            return c == 0 ? X.CompareTo(other.X) : c;
         }
 
         public double X => Lowest.X;
