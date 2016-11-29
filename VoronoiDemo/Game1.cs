@@ -22,6 +22,11 @@ namespace VoronoiDemo
         private List<FortuneSite> points;
         private LinkedList<VEdge> edges;
         private List<Tuple<Vector2, Vector2>> delaunay;
+        private KeyboardState keyboard;
+        private MouseState mouse;
+        private bool wiggle = false, 
+            showVoronoi = true,
+            showDelaunay = true;
         private Random r;
 
         public Game1()
@@ -36,6 +41,15 @@ namespace VoronoiDemo
             graphics.PreferredBackBufferHeight = graphics.GraphicsDevice.DisplayMode.Height;
             graphics.PreferredBackBufferWidth = graphics.GraphicsDevice.DisplayMode.Width;
             graphics.ToggleFullScreen();
+            IsMouseVisible = true;
+            points = new List<FortuneSite>();
+            edges = new LinkedList<VEdge>();
+            delaunay = new List<Tuple<Vector2, Vector2>>();
+            keyboard = Keyboard.GetState();
+            mouse = Mouse.GetState();
+            wiggle = true;
+            r = new Random();
+
             base.Initialize();
         }
         
@@ -56,10 +70,25 @@ namespace VoronoiDemo
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
-            if (Keyboard.GetState().IsKeyDown(Keys.G))
+            var newKeys = Keyboard.GetState();
+            var newMouse = Mouse.GetState();
+            if (keyboard.IsKeyDown(Keys.G) && newKeys.IsKeyUp(Keys.G))
                 GeneratePoints();
-            if (points != null && points.Count > 0)
+            if (keyboard.IsKeyDown(Keys.C) && newKeys.IsKeyUp(Keys.C))
+                ClearPoints();
+            if (keyboard.IsKeyDown(Keys.W) && newKeys.IsKeyUp(Keys.W))
+                wiggle = !wiggle;
+            if (keyboard.IsKeyDown(Keys.V) && newKeys.IsKeyUp(Keys.V))
+                showVoronoi = !showVoronoi;
+            if (keyboard.IsKeyDown(Keys.D) && newKeys.IsKeyUp(Keys.D))
+                showDelaunay = !showDelaunay;
+            if (mouse.LeftButton == ButtonState.Pressed && newMouse.LeftButton == ButtonState.Released)
+                AddPoint(mouse.X, mouse.Y);
+            if (wiggle && points.Count > 0)
                 WigglePoints();
+            keyboard = newKeys;
+            mouse = newMouse;
+            ////mouse = newMouse;
             base.Update(gameTime);
         }
 
@@ -67,32 +96,64 @@ namespace VoronoiDemo
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
             spriteBatch.Begin();
-
-            if (points != null && points.Count > 0)
+            if (showVoronoi)
             {
                 foreach (var edge in edges)
                 {
                     DrawLine(spriteBatch, edge);
                 }
+            }
+            if (showDelaunay)
+            {
                 foreach (var edge in delaunay)
                 {
                     DrawLine(spriteBatch, edge);
                 }
-                foreach (var point in points)
-                {
-                    DrawPoint(spriteBatch, point);
-                }
+            }
+            foreach (var point in points)
+            {
+                DrawPoint(spriteBatch, point);
             }
             spriteBatch.End();
             base.Draw(gameTime);
         }
 
+        private void ClearPoints()
+        {
+            points.Clear();
+            edges.Clear();
+            delaunay.Clear();
+        }
+
+        private void AddPoint(int x, int y)
+        {
+            var newPoints = new List<FortuneSite>(points);
+            newPoints.Add(new FortuneSite(x, y));
+            points = newPoints;
+
+            edges = FortunesAlgorithm.Run(points, 0, 0, graphics.GraphicsDevice.Viewport.Width, graphics.GraphicsDevice.Viewport.Height);
+
+            //convert ajd list to edge list... edges get double added
+            //TODO: figure out better way to do this
+            delaunay = new List<Tuple<Vector2, Vector2>>();
+            foreach (var site in points)
+            {
+                foreach (var neighbor in site.Neighbors)
+                {
+                    delaunay.Add(
+                        new Tuple<Vector2, Vector2>(
+                        new Vector2((float)site.X, (float)site.Y),
+                        new Vector2((float)neighbor.X, (float)neighbor.Y)
+                        ));
+                }
+            }
+        }
+
         private void GeneratePoints()
         {
-            points = new List<FortuneSite>();
+            points.Clear();
 
             //generate points
-            r = new Random();
             var w = graphics.GraphicsDevice.Viewport.Width;
             var h = graphics.GraphicsDevice.Viewport.Height;
             for (var i = 0; i < 500; i++)
@@ -133,7 +194,7 @@ namespace VoronoiDemo
             edges = FortunesAlgorithm.Run(points, 0, 0, graphics.GraphicsDevice.Viewport.Width, graphics.GraphicsDevice.Viewport.Height);
 
             //convert ajd list to edge list... edges get double added
-            delaunay = new List<Tuple<Vector2, Vector2>>();
+            delaunay.Clear();
             foreach (var site in points)
             {
                 foreach (var neighbor in site.Neighbors)
@@ -150,7 +211,8 @@ namespace VoronoiDemo
         private void WigglePoints()
         {
             var newPoints = new List<FortuneSite>(points.Count);
-            newPoints.AddRange(points.Select(point => new FortuneSite(point.X + 5*r.NextDouble() - 2.5, point.Y + 5*r.NextDouble() - 2.5)));
+            if (points.Count > 0)
+                newPoints.AddRange(points.Select(point => new FortuneSite(point.X + 5*r.NextDouble() - 2.5, point.Y + 5*r.NextDouble() - 2.5)));
             points = newPoints;
 
             edges = FortunesAlgorithm.Run(points, 0, 0, graphics.GraphicsDevice.Viewport.Width, graphics.GraphicsDevice.Viewport.Height);
