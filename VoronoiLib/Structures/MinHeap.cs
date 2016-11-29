@@ -81,31 +81,37 @@ namespace VoronoiLib.Structures
 
         private void PercolateDown(int index)
         {
-            var left = 2*index + 1;
-            var right = 2*index + 2;
-            var largest = index;
+            while (true)
+            {
+                var left = 2*index + 1;
+                var right = 2*index + 2;
+                var largest = index;
 
-            if (left < Count && LeftLessThanRight(left, largest))
-                largest = left;
-            if (right < Count && LeftLessThanRight(right, largest))
-                largest = right;
-            if (largest == index)
-                return;
-            Swap(index, largest);
-            PercolateDown(largest);
+                if (left < Count && LeftLessThanRight(left, largest))
+                    largest = left;
+                if (right < Count && LeftLessThanRight(right, largest))
+                    largest = right;
+                if (largest == index)
+                    return;
+                Swap(index, largest);
+                index = largest;
+            }
         }
 
         private void PercolateUp(int index)
         {
-            if (index >= Count || index <= 0)
-                return;
-            var parent = (index - 1)/2;
+            while (true)
+            {
+                if (index >= Count || index <= 0)
+                    return;
+                var parent = (index - 1)/2;
 
-            if (LeftLessThanRight(parent, index))
-                return;
+                if (LeftLessThanRight(parent, index))
+                    return;
 
-            Swap(index, parent);
-            PercolateUp(parent);
+                Swap(index, parent);
+                index = parent;
+            }
         }
 
         private bool LeftLessThanRight(int left, int right)
