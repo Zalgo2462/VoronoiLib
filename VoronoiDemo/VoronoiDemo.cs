@@ -124,7 +124,12 @@ namespace VoronoiDemo
 
         private void AddPoint(int x, int y)
         {
-            var newPoints = new List<FortuneSite>(points);
+            var newPoints = new List<FortuneSite>();
+            if (points.Count > 0)
+            {
+                newPoints.AddRange(points.Select(point => new FortuneSite(point.X, point.Y)));
+            }
+            
             newPoints.Add(new FortuneSite(x, y));
             points = newPoints;
 
@@ -132,7 +137,7 @@ namespace VoronoiDemo
 
             //convert ajd list to edge list... edges get double added
             //TODO: figure out better way to do this
-            delaunay = new List<Tuple<Vector2, Vector2>>();
+            delaunay.Clear();
             foreach (var site in points)
             {
                 foreach (var neighbor in site.Neighbors)
@@ -219,7 +224,7 @@ namespace VoronoiDemo
 
             //convert ajd list to edge list... edges get double added
             //TODO: figure out better way to do this
-            delaunay = new List<Tuple<Vector2, Vector2>>();
+            delaunay.Clear();
             foreach (var site in points)
             {
                 foreach (var neighbor in site.Neighbors)
