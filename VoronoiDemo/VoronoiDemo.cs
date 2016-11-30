@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using VoronoiLib;
@@ -9,23 +10,27 @@ using VoronoiLib.Structures;
 
 namespace VoronoiDemo
 {
-    /// <summary>
-    /// This is the main type for your game.
-    /// </summary>
+
+    //Demo for VoronoiLib
     public class VoronoiDemo : Game
     {
-        GraphicsDeviceManager graphics;
-        SpriteBatch spriteBatch;
+        private readonly GraphicsDeviceManager graphics;
+        private SpriteBatch spriteBatch;
         private Texture2D t;
+        private SpriteFont sf;
         private List<FortuneSite> points;
         private LinkedList<VEdge> edges;
         private List<Tuple<Vector2, Vector2>> delaunay;
         private KeyboardState keyboard;
         private MouseState mouse;
-        private bool wiggle = true, 
+        private bool wiggle = true,
             showVoronoi = true,
-            showDelaunay = true;
+            showDelaunay = true,
+            showHelp = true;
+
         private Random r;
+        private Rectangle help;
+        private Color helpColor;
         private const int GEN_COUNT = 500;
 
         public VoronoiDemo()
@@ -47,7 +52,8 @@ namespace VoronoiDemo
             keyboard = Keyboard.GetState();
             mouse = Mouse.GetState();
             r = new Random(100);
-
+            help = new Rectangle(0, 0, 285, 180);
+            helpColor = new Color(Color.Black, (float).5);
             base.Initialize();
         }
         
@@ -58,6 +64,7 @@ namespace VoronoiDemo
             // create 1x1 texture for line drawing
             t = new Texture2D(GraphicsDevice, 1, 1);
             t.SetData(new[] { Color.White });// fill the texture with white
+            sf = Content.Load<SpriteFont>("Courier New");
         }
         
         protected override void UnloadContent()
@@ -70,6 +77,8 @@ namespace VoronoiDemo
                 Exit();
             var newKeys = Keyboard.GetState();
             var newMouse = Mouse.GetState();
+            if (keyboard.IsKeyDown(Keys.H) && newKeys.IsKeyUp(Keys.H))
+                showHelp = !showHelp;
             if (keyboard.IsKeyDown(Keys.G) && newKeys.IsKeyUp(Keys.G))
                 GeneratePoints();
             if (keyboard.IsKeyDown(Keys.C) && newKeys.IsKeyUp(Keys.C))
@@ -112,7 +121,10 @@ namespace VoronoiDemo
             {
                 DrawPoint(spriteBatch, point);
             }
+            if (showHelp)
+                DrawHelp(spriteBatch);
             spriteBatch.End();
+
             base.Draw(gameTime);
         }
 
@@ -222,6 +234,19 @@ namespace VoronoiDemo
             edges = FortunesAlgorithm.Run(points, 0, 0, graphics.GraphicsDevice.Viewport.Width, graphics.GraphicsDevice.Viewport.Height);
 
             GenerateDelaunay();
+        }
+
+        private void DrawHelp(SpriteBatch sb)
+        {
+            sb.Draw(t, help, helpColor);
+            sb.DrawString(sf, "Controls: ", new Vector2(5, 10), Color.White);
+            sb.DrawString(sf, "[H] Show/ Hide Help", new Vector2(10, 30), Color.White);
+            sb.DrawString(sf, "[Click] Add Point", new Vector2(10, 50), Color.White);
+            sb.DrawString(sf, "[G] Generate Points", new Vector2(10, 70), Color.White);
+            sb.DrawString(sf, "[C] Clear Points", new Vector2(10, 90), Color.White);
+            sb.DrawString(sf, "[V] Show/ Hide Voronoi Cells", new Vector2(10, 110), Color.White);
+            sb.DrawString(sf, "[D] Show/ Hide Delaunay Triangulation", new Vector2(10, 130), Color.White);
+            sb.DrawString(sf, "[Esc] Exit", new Vector2(10, 150), Color.White);
         }
 
         private void DrawPoint(SpriteBatch sb, FortuneSite point)
