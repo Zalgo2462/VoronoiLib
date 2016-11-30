@@ -135,20 +135,7 @@ namespace VoronoiDemo
 
             edges = FortunesAlgorithm.Run(points, 0, 0, graphics.GraphicsDevice.Viewport.Width, graphics.GraphicsDevice.Viewport.Height);
 
-            //convert ajd list to edge list... edges get double added
-            //TODO: figure out better way to do this
-            delaunay.Clear();
-            foreach (var site in points)
-            {
-                foreach (var neighbor in site.Neighbors)
-                {
-                    delaunay.Add(
-                        new Tuple<Vector2, Vector2>(
-                        new Vector2((float)site.X, (float)site.Y),
-                        new Vector2((float)neighbor.X, (float)neighbor.Y)
-                        ));
-                }
-            }
+            GenerateDelaunay();
         }
 
         private void GeneratePoints()
@@ -198,18 +185,29 @@ namespace VoronoiDemo
 
             edges = FortunesAlgorithm.Run(points, 0, 0, graphics.GraphicsDevice.Viewport.Width, graphics.GraphicsDevice.Viewport.Height);
 
+            GenerateDelaunay();
             //convert ajd list to edge list... edges get double added
+            
+        }
+
+        private void GenerateDelaunay()
+        {
+            var processed = new HashSet<FortuneSite>();
             delaunay.Clear();
             foreach (var site in points)
             {
                 foreach (var neighbor in site.Neighbors)
                 {
-                    delaunay.Add(
-                        new Tuple<Vector2, Vector2>(
-                        new Vector2((float)site.X, (float)site.Y),
-                        new Vector2((float)neighbor.X, (float)neighbor.Y)
-                        ));
+                    if (!processed.Contains(neighbor))
+                    {
+                        delaunay.Add(
+                            new Tuple<Vector2, Vector2>(
+                                new Vector2((float) site.X, (float) site.Y),
+                                new Vector2((float) neighbor.X, (float) neighbor.Y)
+                            ));
+                    }
                 }
+                processed.Add(site);
             }
         }
 
@@ -222,20 +220,7 @@ namespace VoronoiDemo
 
             edges = FortunesAlgorithm.Run(points, 0, 0, graphics.GraphicsDevice.Viewport.Width, graphics.GraphicsDevice.Viewport.Height);
 
-            //convert ajd list to edge list... edges get double added
-            //TODO: figure out better way to do this
-            delaunay.Clear();
-            foreach (var site in points)
-            {
-                foreach (var neighbor in site.Neighbors)
-                {
-                    delaunay.Add(
-                        new Tuple<Vector2, Vector2>(
-                        new Vector2((float)site.X, (float)site.Y),
-                        new Vector2((float)neighbor.X, (float)neighbor.Y)
-                        ));
-                }
-            }
+            GenerateDelaunay();
         }
 
         private void DrawPoint(SpriteBatch sb, FortuneSite point)
