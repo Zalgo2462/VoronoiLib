@@ -16,7 +16,9 @@ LinkedList<VEdge> = FortunesAlgorithm.Run(points, 0, 0, 800, 800);
 //VEdge.End is the ending point for the edge
 //FortuneSite.Neighbors contains the site's neighbors in the Delaunay Triangulation
 ```
-
+#MonoGame Example:
+##Voronoi Cells in Red. Delaunay Triangulation in Yellow
+![Voronoi](http://i.imgur.com/MuXTyL7.png)
 Implementation inspired by:
 Ivan Kuckir's project (MIT) @ http://blog.ivank.net/fortunes-algorithm-and-implementation.html
 Raymond Hill's project (MIT) @ https://github.com/gorhill/Javascript-Voronoi 
