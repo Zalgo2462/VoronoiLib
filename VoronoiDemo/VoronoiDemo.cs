@@ -26,6 +26,7 @@ namespace VoronoiDemo
             showVoronoi = true,
             showDelaunay = true;
         private Random r;
+        private const int GEN_COUNT = 5000;
 
         public VoronoiDemo()
         {
@@ -145,7 +146,7 @@ namespace VoronoiDemo
             //generate points
             var w = graphics.GraphicsDevice.Viewport.Width;
             var h = graphics.GraphicsDevice.Viewport.Height;
-            for (var i = 0; i < 500; i++)
+            for (var i = 0; i < GEN_COUNT; i++)
             {
                 points.Add(new FortuneSite(
                     r.Next((int)(w / 20.0), (int)(19 * w / 20.0)),
