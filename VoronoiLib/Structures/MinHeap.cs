@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 
 namespace VoronoiLib.Structures
 {
@@ -114,6 +115,7 @@ namespace VoronoiLib.Structures
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool LeftLessThanRight(int left, int right)
         {
             return items[left].CompareTo(items[right]) < 0;

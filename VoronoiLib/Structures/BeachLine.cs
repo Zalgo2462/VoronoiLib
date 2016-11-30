@@ -319,7 +319,6 @@ namespace VoronoiLib.Structures
                 return leftNode.Data.Site.X;
             var site = node.Data.Site;
             var leftSite = leftNode.Data.Site;
-            //TODO: make sure this is correct the cp break point
             return ParabolaMath.IntersectParabolaX(leftSite.X, leftSite.Y, site.X, site.Y, directrix);
         }
 
@@ -337,7 +336,6 @@ namespace VoronoiLib.Structures
                 return rightNode.Data.Site.X;
             var site = node.Data.Site;
             var rightSite = rightNode.Data.Site;
-            //TODO: make sure this is returning the right break point
             return ParabolaMath.IntersectParabolaX(site.X, site.Y, rightSite.X, rightSite.Y, directrix);
         }
 

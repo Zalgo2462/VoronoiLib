@@ -26,7 +26,7 @@ namespace VoronoiDemo
             showVoronoi = true,
             showDelaunay = true;
         private Random r;
-        private const int GEN_COUNT = 5000;
+        private const int GEN_COUNT = 500;
 
         public VoronoiDemo()
         {
