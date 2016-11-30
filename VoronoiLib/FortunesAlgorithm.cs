@@ -48,6 +48,15 @@ namespace VoronoiLib
                 //advance
                 edgeNode = next;
             }
+            var edges2 = new List<VEdge>(edges);
+            edges2.Sort((a, b) =>
+            {
+                var ax = a.End.X - a.Start.X;
+                var ay = a.End.Y - a.Start.Y;
+                var bx = b.End.X - b.Start.X;
+                var by = b.End.Y - b.Start.Y;
+                return (ax*ax + ay*ay).CompareTo(bx*bx + by*by);
+            });
 
             return edges;
         }
