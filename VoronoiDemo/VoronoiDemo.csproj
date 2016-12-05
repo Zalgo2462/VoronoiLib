@@ -86,7 +86,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\VoronoiLib\VoronoiLib.csproj">
-      <Project>{6db276c6-4ff5-4a30-b44a-0e4a79f2e1b0}</Project>
+      <Project>{14a2a7d7-bcc2-4c8a-a040-c8c38317d5d5}</Project>
       <Name>VoronoiLib</Name>
     </ProjectReference>
   </ItemGroup>

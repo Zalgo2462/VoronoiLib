@@ -9,7 +9,10 @@ namespace VoronoiLib
         public static LinkedList<VEdge> Run(List<FortuneSite> sites, double minX, double minY, double maxX, double maxY)
         {
             var eventQueue = new MinHeap<FortuneEvent>(5*sites.Count);
-            sites.ForEach(s => eventQueue.Insert(new FortuneSiteEvent(s)));
+            foreach (var s in sites)
+            {
+                eventQueue.Insert(new FortuneSiteEvent(s));
+            }
             //init tree
             var beachLine = new BeachLine();
             var edges = new LinkedList<VEdge>();
