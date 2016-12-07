@@ -153,7 +153,7 @@ namespace VoronoiLib.Structures
             //had the same y value
             else if (leftSection != null && rightSection == null)
             {
-                var start = new VPoint((leftSection.Data.Site.X + site.X)/ 2, directrix);
+                var start = new VPoint((leftSection.Data.Site.X + site.X)/ 2, double.MinValue);
                 var infEdge = new VEdge(start, leftSection.Data.Site, site);
                 var newEdge = new VEdge(start, site, leftSection.Data.Site);
 
