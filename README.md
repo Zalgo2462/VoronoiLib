@@ -33,8 +33,8 @@ Controls:
 - Click: Insert a Point
 ![Voronoi](http://i.imgur.com/tr1XCib.png)
 Implementation inspired by:
--Ivan Kuckir's project (MIT) @ http://blog.ivank.net/fortunes-algorithm-and-implementation.html
--Raymond Hill's project (MIT) @ https://github.com/gorhill/Javascript-Voronoi 
+- Ivan Kuckir's project (MIT) @ http://blog.ivank.net/fortunes-algorithm-and-implementation.html
+- Raymond Hill's project (MIT) @ https://github.com/gorhill/Javascript-Voronoi 
 
 Feel free to use the code under MIT license. However, if you find the code useful, feel free to send me a message or make a link back to the repo.
 
