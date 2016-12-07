@@ -2,6 +2,12 @@
 C# implementation of Fortune's Algorithm. Includes MonoGame example.
 Unlike several implemenations of Fortune's Algorithm, this implementation guarantees O(n ln(n)) performance by way of a specialized Red Black Tree (Credit: Raymond Hill).
 
+# Dependencies
+- The library (VoronoiLib) is compiled for .net standard 1.1.
+- The demo (VoronoiDemo) is compiled for the MonoGame runtime
+- The speed est (VoronoiSpeedTest) is compiled for .NET Core
+
+As such, all three projects should be able to be built on Linux or OS X.
 # Use
 ```
 var points = new List<FortuneSite> {
