@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("VoronoiDemo")]
 [assembly: AssemblyProduct("VoronoiDemo")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Generates Voronoi Diagrams")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyCopyright("Copyright ©  2016")]
+[assembly: AssemblyCopyright("")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
