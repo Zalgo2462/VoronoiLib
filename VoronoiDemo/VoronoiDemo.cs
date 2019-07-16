@@ -21,6 +21,7 @@ namespace VoronoiDemo
         private List<Tuple<Vector2, Vector2>> delaunay;
         private KeyboardState keyboard;
         private MouseState mouse;
+
         private bool wiggle = true,
             showVoronoi = true,
             showCells = false,
@@ -112,7 +113,7 @@ namespace VoronoiDemo
             {
                 foreach (var edge in edges)
                 {
-                    DrawLine(spriteBatch, edge);
+                    DrawLine(spriteBatch, edge, Color.Red);
                 }
             }
 
@@ -120,9 +121,9 @@ namespace VoronoiDemo
             {
                 foreach (var point in points)
                 {
-                    for (int i = 0; i < point.Cell.Points.Count - 1; i++)
+                    foreach (var edge in point.Cell)
                     {
-                        DrawLine(spriteBatch, point.Cell.Points[i], point.Cell.Points[i + 1]);
+                        DrawLine(spriteBatch, edge, Color.Blue);
                     }
                 }
             }
@@ -153,8 +154,6 @@ namespace VoronoiDemo
             edges.Clear();
             delaunay.Clear();
         }
-
-
 
         private void AddPoint(int x, int y)
         {
@@ -276,41 +275,22 @@ namespace VoronoiDemo
             var rect = new Rectangle((int)(point.X - size / 2.0), (int)(point.Y - size / 2.0), size, size);
 
             var color = Color.Green;
-            if (testPoint != null && point.Cell.Contains(testPoint))
+            if (testPoint != null && point.Contains(testPoint))
             {
                 color = Color.Red;
             }
 
-           sb.Draw(t, rect, color);
+            sb.Draw(t, rect, color);
         }
 
-        private void DrawLine(SpriteBatch sb, VPoint start, VPoint end)
-        {
-            var startV = new Vector2((float)start.X, (float)start.Y);
-            var endV = new Vector2((float)end.X, (float)end.Y);
-
-            var vector = endV - startV;
-            var angle = (float)Math.Atan2(vector.Y, vector.X);
-            var rect = new Rectangle((int)start.X, (int)start.Y, (int)vector.Length(), 1);
-
-            sb.Draw(t,
-                rect, //width of line, change this to make thicker line
-                null,
-                Color.LimeGreen, //colour of line
-                angle,     //angle of line (calulated above)
-                new Vector2(0, 0), // point in line about which to rotate
-                SpriteEffects.None,
-                0);
-        }
-
-        private void DrawLine(SpriteBatch sb, VEdge vEdge)
+        private void DrawLine(SpriteBatch sb, VEdge vEdge, Color color)
         {
             float angle;
             var rect = vEdge.ToRectangle(out angle);
             sb.Draw(t,
                 rect, //width of line, change this to make thicker line
                 null,
-                Color.Red, //colour of line
+                color,  //colour of line
                 angle,     //angle of line (calulated above)
                 new Vector2(0, 0), // point in line about which to rotate
                 SpriteEffects.None,
@@ -349,7 +329,6 @@ namespace VoronoiDemo
         {
             return edge.End.ToVector2() - edge.Start.ToVector2();
         }
-
 
         public static Rectangle ToRectangle(this VEdge edge, out float angle)
         {
