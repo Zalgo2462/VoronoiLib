@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using VoronoiLib;
 using VoronoiLib.Structures;
 
 namespace VoronoiDemo
 {
-
     //Demo for VoronoiLib
     public class VoronoiDemo : Game
     {
@@ -22,8 +21,10 @@ namespace VoronoiDemo
         private List<Tuple<Vector2, Vector2>> delaunay;
         private KeyboardState keyboard;
         private MouseState mouse;
+
         private bool wiggle = true,
             showVoronoi = true,
+            showCells = false,
             showDelaunay = true,
             showHelp = true;
 
@@ -31,6 +32,8 @@ namespace VoronoiDemo
         private Rectangle help;
         private Color helpColor;
         private const int GEN_COUNT = 500;
+
+        public VPoint testPoint = null;
 
         public VoronoiDemo()
         {
@@ -51,11 +54,11 @@ namespace VoronoiDemo
             keyboard = Keyboard.GetState();
             mouse = Mouse.GetState();
             r = new Random(100);
-            help = new Rectangle(0, 0, 285, 180);
+            help = new Rectangle(0, 0, 285, 200);
             helpColor = new Color(Color.Black, (float).5);
             base.Initialize();
         }
-        
+
         protected override void LoadContent()
         {
             // Create a new SpriteBatch, which can be used to draw textures.
@@ -65,11 +68,11 @@ namespace VoronoiDemo
             t.SetData(new[] { Color.White });// fill the texture with white
             sf = Content.Load<SpriteFont>("Courier New");
         }
-        
+
         protected override void UnloadContent()
         {
         }
-        
+
         protected override void Update(GameTime gameTime)
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
@@ -86,10 +89,14 @@ namespace VoronoiDemo
                 wiggle = !wiggle;
             if (keyboard.IsKeyDown(Keys.V) && newKeys.IsKeyUp(Keys.V))
                 showVoronoi = !showVoronoi;
+            if (keyboard.IsKeyDown(Keys.B) && newKeys.IsKeyUp(Keys.B))
+                showCells = !showCells;
             if (keyboard.IsKeyDown(Keys.D) && newKeys.IsKeyUp(Keys.D))
                 showDelaunay = !showDelaunay;
             if (mouse.LeftButton == ButtonState.Pressed && newMouse.LeftButton == ButtonState.Released)
                 AddPoint(mouse.X, mouse.Y);
+            if (mouse.RightButton == ButtonState.Pressed && newMouse.RightButton == ButtonState.Released)
+                testPoint = new VPoint(mouse.X, mouse.Y);
             if (wiggle && points.Count > 0)
                 WigglePoints();
             keyboard = newKeys;
@@ -106,9 +113,21 @@ namespace VoronoiDemo
             {
                 foreach (var edge in edges)
                 {
-                    DrawLine(spriteBatch, edge);
+                    DrawLine(spriteBatch, edge, Color.Red);
                 }
             }
+
+            if (showCells)
+            {
+                foreach (var point in points)
+                {
+                    foreach (var edge in point.Cell)
+                    {
+                        DrawLine(spriteBatch, edge, Color.Blue);
+                    }
+                }
+            }
+
             if (showDelaunay)
             {
                 foreach (var edge in delaunay)
@@ -116,10 +135,12 @@ namespace VoronoiDemo
                     DrawLine(spriteBatch, edge);
                 }
             }
+
             foreach (var point in points)
             {
                 DrawPoint(spriteBatch, point);
             }
+
             if (showHelp)
                 DrawHelp(spriteBatch);
             spriteBatch.End();
@@ -141,7 +162,7 @@ namespace VoronoiDemo
             {
                 newPoints.AddRange(points.Select(point => new FortuneSite(point.X, point.Y)));
             }
-            
+
             newPoints.Add(new FortuneSite(x, y));
             points = newPoints;
 
@@ -199,7 +220,6 @@ namespace VoronoiDemo
 
             GenerateDelaunay();
             //convert ajd list to edge list... edges get double added
-            
         }
 
         private void GenerateDelaunay()
@@ -214,8 +234,8 @@ namespace VoronoiDemo
                     {
                         delaunay.Add(
                             new Tuple<Vector2, Vector2>(
-                                new Vector2((float) site.X, (float) site.Y),
-                                new Vector2((float) neighbor.X, (float) neighbor.Y)
+                                new Vector2((float)site.X, (float)site.Y),
+                                new Vector2((float)neighbor.X, (float)neighbor.Y)
                             ));
                     }
                 }
@@ -227,7 +247,7 @@ namespace VoronoiDemo
         {
             var newPoints = new List<FortuneSite>(points.Count);
             if (points.Count > 0)
-                newPoints.AddRange(points.Select(point => new FortuneSite(point.X + 5*r.NextDouble() - 2.5, point.Y + 5*r.NextDouble() - 2.5)));
+                newPoints.AddRange(points.Select(point => new FortuneSite(point.X + 5 * r.NextDouble() - 2.5, point.Y + 5 * r.NextDouble() - 2.5)));
             points = newPoints;
 
             edges = FortunesAlgorithm.Run(points, 0, 0, graphics.GraphicsDevice.Viewport.Width, graphics.GraphicsDevice.Viewport.Height);
@@ -244,25 +264,33 @@ namespace VoronoiDemo
             sb.DrawString(sf, "[G] Generate Points", new Vector2(10, 70), Color.White);
             sb.DrawString(sf, "[C] Clear Points", new Vector2(10, 90), Color.White);
             sb.DrawString(sf, "[V] Show/ Hide Voronoi Cells", new Vector2(10, 110), Color.White);
-            sb.DrawString(sf, "[D] Show/ Hide Delaunay Triangulation", new Vector2(10, 130), Color.White);
-            sb.DrawString(sf, "[Esc] Exit", new Vector2(10, 150), Color.White);
+            sb.DrawString(sf, "[B] Show/ Hide Cells based on Points", new Vector2(10, 130), Color.White);
+            sb.DrawString(sf, "[D] Show/ Hide Delaunay Triangulation", new Vector2(10, 150), Color.White);
+            sb.DrawString(sf, "[Esc] Exit", new Vector2(10, 170), Color.White);
         }
 
         private void DrawPoint(SpriteBatch sb, FortuneSite point)
         {
             var size = 5;
-            var rect = new Rectangle((int) (point.X - size /2.0), (int) (point.Y - size /2.0), size, size);
-            sb.Draw(t, rect, Color.Green);
+            var rect = new Rectangle((int)(point.X - size / 2.0), (int)(point.Y - size / 2.0), size, size);
+
+            var color = Color.Green;
+            if (testPoint != null && point.Contains(testPoint))
+            {
+                color = Color.Red;
+            }
+
+            sb.Draw(t, rect, color);
         }
 
-        private void DrawLine(SpriteBatch sb, VEdge vEdge)
+        private void DrawLine(SpriteBatch sb, VEdge vEdge, Color color)
         {
             float angle;
             var rect = vEdge.ToRectangle(out angle);
             sb.Draw(t,
                 rect, //width of line, change this to make thicker line
                 null,
-                Color.Red, //colour of line
+                color,  //colour of line
                 angle,     //angle of line (calulated above)
                 new Vector2(0, 0), // point in line about which to rotate
                 SpriteEffects.None,
@@ -273,12 +301,12 @@ namespace VoronoiDemo
         {
             var diff = edge.Item2 - edge.Item1;
             var angle = Math.Atan2(diff.Y, diff.X);
-            var rect = new Rectangle((int) edge.Item1.X, (int) edge.Item1.Y, (int) diff.Length(), 1);
+            var rect = new Rectangle((int)edge.Item1.X, (int)edge.Item1.Y, (int)diff.Length(), 1);
             sb.Draw(t,
                 rect,
                 null,
                 Color.YellowGreen,
-                (float) angle,
+                (float)angle,
                 new Vector2(0, 0),
                 SpriteEffects.None,
                 0);
@@ -289,7 +317,7 @@ namespace VoronoiDemo
     {
         public static Vector2 ToVector2(this FortuneSite site)
         {
-            return new Vector2((float) site.X, (float) site.Y);
+            return new Vector2((float)site.X, (float)site.Y);
         }
 
         public static Vector2 ToVector2(this VPoint site)
@@ -302,12 +330,11 @@ namespace VoronoiDemo
             return edge.End.ToVector2() - edge.Start.ToVector2();
         }
 
-
         public static Rectangle ToRectangle(this VEdge edge, out float angle)
         {
             var vector = edge.ToVector2();
             angle = (float)Math.Atan2(vector.Y, vector.X);
-            return new Rectangle((int) edge.Start.X, (int) edge.Start.Y, (int)vector.Length(), 1);
+            return new Rectangle((int)edge.Start.X, (int)edge.Start.Y, (int)vector.Length(), 1);
         }
     }
 }
