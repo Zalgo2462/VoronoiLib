@@ -1,0 +1,24 @@
+name: dotnet package
+on:
+  push:
+  pull_request:
+    branches:
+      - master
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy: 
+      matrix:
+        dotnet-version: ['4.7.2', '5.0.x']
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup .NET core SDK ${{ matrix.dotnet-version }}
+        uses: actions/setup-dotnet@v1.7.2
+        with:
+          dotnet-version: ${{ matrix.dotnet-version }}
+      - name: Install dependencies
+        run: dotnet restore
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+      - name: Test
+        dotnet test --no-restore --verbosity normal
